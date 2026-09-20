@@ -1,6 +1,6 @@
 /**
  * Experience entries, most recent first. One object per role. Each renders as
- * an expandable card; the first one is open by default.
+ * a compact expandable row; details stay collapsed until opened.
  *
  * Use the string 'TODO' for anything you have not confirmed yet — it is
  * rendered as a visible placeholder rather than hidden, so nothing is
@@ -18,7 +18,7 @@ export interface ExperienceEntry {
   end: string;
   /** e.g. 'Remote', 'Hybrid · Pune', 'On-site · Bengaluru'. */
   location: string;
-  /** One or two sentences on the role. Shown when the card is expanded. */
+  /** One or two sentences on the role. Shown when the row is expanded. */
   description?: string;
   responsibilities: string[];
   tech: string[];

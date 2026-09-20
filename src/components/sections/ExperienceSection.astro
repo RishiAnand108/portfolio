@@ -1,12 +1,13 @@
 ---
 /**
- * Experience as expandable cards inside one bordered container.
+ * Experience as a compact expandable list — collapsed rows by default,
+ * matching a summary-row layout rather than oversized cards.
  *
  * Each entry is a native <details>/<summary>, so it works without JavaScript,
  * is keyboard accessible out of the box (Enter / Space on the header) and
  * exposes its expanded state to assistive technology. The small script below
  * only adds the smooth open/close animation. Several entries may be open at
- * once; the first one starts open.
+ * once; none start open, so the default appearance stays compact.
  */
 import Section from './Section.astro';
 import Button from '@/components/ui/Button.astro';
@@ -35,65 +36,69 @@ const dateRange = (start: string, end: string) => {
   {experience.length === 0 ? (
     <p class="text-muted text-[14px]">Experience entries will be added soon.</p>
   ) : (
-    <div class="border-line-2 bg-surface rounded-lg border">
+    <div>
       {experience.map((entry, index) => {
         const range = dateRange(entry.start, entry.end);
         const panelId = `experience-${entry.id}`;
         return (
-          <>
-            {index > 0 && <div aria-hidden="true" class="rule-x mx-4" />}
-            <details class="group" open={index === 0} data-experience>
+          <div>
+            {index > 0 && <div aria-hidden="true" class="rule-x" />}
+            <details class="group" data-experience>
               <summary
-                class="grid cursor-pointer list-none grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-x-3 gap-y-0.5 px-4 py-4 select-none [&::-webkit-details-marker]:hidden"
+                class="flex cursor-pointer list-none items-start gap-3 py-3.5 select-none [&::-webkit-details-marker]:hidden"
                 aria-controls={panelId}
               >
                 <span
                   aria-hidden="true"
-                  class="border-line-2 bg-bg text-muted col-start-1 row-span-2 flex size-11 items-center justify-center overflow-hidden rounded-lg border font-mono text-[12px] font-semibold"
+                  class="border-line-2 bg-surface text-muted mt-0.5 flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-lg border font-mono text-[11px] font-semibold sm:size-10"
                 >
                   {entry.logo ? (
                     <img
                       src={href(entry.logo)}
                       alt=""
-                      width="44"
-                      height="44"
+                      width="40"
+                      height="40"
                       loading="lazy"
-                      class="size-full object-contain p-1.5"
+                      class="size-full object-contain p-1"
                     />
                   ) : (
                     initials(entry.organization)
                   )}
                 </span>
 
-                <h3 class="text-ink col-start-2 row-start-1 min-w-0 text-[15px] leading-tight font-bold tracking-tight">
-                  {entry.organization}
-                </h3>
-                <span class="text-muted col-start-3 row-start-1 font-mono text-[11px] whitespace-nowrap">
-                  {range ?? (
-                    <span class="text-faint" title="Dates not added yet">
-                      Dates: TODO
-                    </span>
-                  )}
-                </span>
-                <span class="text-muted col-span-2 col-start-2 row-start-2 text-[13px]">
-                  <span class="text-ink-2 font-medium">{entry.role}</span>
-                  <span aria-hidden="true" class="text-faint mx-1.5">
-                    |
-                  </span>
-                  {isTodo(entry.location) ? (
-                    <span class="text-faint" title="Location not added yet">
-                      Location: TODO
-                    </span>
-                  ) : (
-                    entry.location
-                  )}
-                </span>
+                <div class="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                  <div class="min-w-0">
+                    <h3 class="text-ink text-[14px] leading-snug font-semibold tracking-tight sm:text-[15px]">
+                      {entry.organization}
+                    </h3>
+                    <p class="text-muted mt-0.5 text-[13px] leading-snug">{entry.role}</p>
+                  </div>
+
+                  <div class="sm:min-w-[9.5rem] sm:text-right">
+                    <p class="text-muted text-[13px] leading-snug whitespace-nowrap">
+                      {range ?? (
+                        <span class="text-faint" title="Dates not added yet">
+                          TODO
+                        </span>
+                      )}
+                    </p>
+                    <p class="text-muted/80 mt-0.5 text-[13px] leading-snug">
+                      {isTodo(entry.location) ? (
+                        <span class="text-faint" title="Location not added yet">
+                          TODO
+                        </span>
+                      ) : (
+                        entry.location
+                      )}
+                    </p>
+                  </div>
+                </div>
 
                 <span
                   aria-hidden="true"
-                  class="text-faint group-hover:text-muted col-start-4 row-span-2 transition-transform duration-300 group-open:rotate-180"
+                  class="text-faint group-hover:text-muted mt-1 shrink-0 transition-transform duration-300 group-open:rotate-180"
                 >
-                  <Icon name="chevron-down" size={16} />
+                  <Icon name="chevron-down" size={14} />
                 </span>
               </summary>
 
@@ -103,7 +108,7 @@ const dateRange = (start: string, end: string) => {
                 data-panel
               >
                 <div class="min-h-0 overflow-hidden">
-                  <div class="px-4 pt-1 pb-5 sm:pl-[4.5rem]">
+                  <div class="pt-0.5 pb-4 pl-12 sm:pl-[3.25rem]">
                     {entry.description && (
                       <p class="text-ink-2 text-[13.5px] leading-relaxed text-pretty">
                         {entry.description}
@@ -111,7 +116,7 @@ const dateRange = (start: string, end: string) => {
                     )}
 
                     {entry.metrics && entry.metrics.length > 0 && (
-                      <dl class="border-line-2 bg-bg divide-line-2 mt-4 grid grid-cols-2 divide-x rounded-lg border sm:grid-cols-4">
+                      <dl class="border-line-2 bg-surface divide-line-2 mt-3 grid grid-cols-2 divide-x rounded-lg border sm:grid-cols-4">
                         {entry.metrics.map((m) => (
                           <div class="px-3 py-2">
                             <dt class="text-faint text-[10px] font-semibold tracking-wider uppercase">
@@ -124,31 +129,26 @@ const dateRange = (start: string, end: string) => {
                     )}
 
                     {entry.responsibilities.length > 0 && (
-                      <>
-                        <p class="text-faint mt-4 mb-2 text-[10px] font-bold tracking-[0.2em] uppercase">
-                          Responsibilities
-                        </p>
-                        <ul class="text-ink-2 space-y-1.5 text-[13.5px] leading-relaxed">
-                          {entry.responsibilities.map((item) => (
-                            <li class="flex gap-2.5">
-                              <span aria-hidden="true" class="text-faint">
-                                •
-                              </span>
-                              <span class="text-pretty">{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </>
+                      <ul class="text-ink-2 mt-3 space-y-1.5 text-[13.5px] leading-relaxed">
+                        {entry.responsibilities.map((item) => (
+                          <li class="flex gap-2.5">
+                            <span aria-hidden="true" class="text-faint">
+                              •
+                            </span>
+                            <span class="text-pretty">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
                     )}
 
                     <TagList
                       items={entry.tech}
                       label={`Technologies used at ${entry.organization}`}
-                      class="mt-4"
+                      class="mt-3"
                     />
 
                     {isShown(entry.link) && (
-                      <div class="mt-4">
+                      <div class="mt-3">
                         <Button
                           href={entry.link}
                           icon="arrow-up-right"
@@ -162,7 +162,7 @@ const dateRange = (start: string, end: string) => {
                 </div>
               </div>
             </details>
-          </>
+          </div>
         );
       })}
     </div>
@@ -170,7 +170,7 @@ const dateRange = (start: string, end: string) => {
 </Section>
 
 <script>
-  // Smooth expand / collapse for the experience cards.
+  // Smooth expand / collapse for the experience rows.
   //
   // The panel is a CSS grid whose single row animates between 1fr (open) and
   // 0fr (the `data-closed` state, which only this script ever sets). So without
