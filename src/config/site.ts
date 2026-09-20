@@ -42,7 +42,7 @@ export const site = {
 
 export const links = {
   // TODO: replace with your real address before deploying.
-  email: 'hello@example.com',
+  email: 'risanand108@gmail.com',
   // Taken from the local git user name — change it if your profile differs.
   github: 'https://github.com/RishiAnand108',
   // TODO: add your LinkedIn profile URL, e.g. https://www.linkedin.com/in/your-handle

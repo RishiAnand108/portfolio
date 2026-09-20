@@ -85,7 +85,7 @@ Files marked ★ are the ones you edit to change content. Presentation lives els
 
 Everything personal is in **`src/config/site.ts`**:
 
-- `links.email` — **currently a placeholder (`hello@example.com`). Replace it.**
+- `links.email` — **currently a placeholder (`risanand108@gmail.com`). Replace it.**
 - `links.github` — set from the local git user name; change if needed.
 - `links.linkedin` — empty. Add your profile URL.
 - `links.resume` — empty. Put `resume.pdf` in `public/` and set this to `/resume.pdf`.
