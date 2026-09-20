@@ -1,0 +1,112 @@
+---
+/**
+ * Cinematic banner at the top of the hero. Spans the full content column
+ * (edge to edge between the vertical rules), with soft fades into the page
+ * background and a live clock in the corner.
+ *
+ * The image comes from `site.banner` in src/config/site.ts. Generate it with
+ * `npm run banner -- path/to/image.png`. If no image is configured, a
+ * dot-grid placeholder is shown instead so the layout never breaks.
+ */
+import { site } from '@/config/site';
+import { href } from '@/utils/url';
+
+const { banner, clock } = site;
+const hasImage = Boolean(banner.src);
+---
+
+<div
+  class="border-line bg-surface relative h-44 overflow-hidden border-b shadow-[0_4px_12px_rgba(2,6,23,0.05)] sm:h-56 md:h-64 lg:h-72"
+  style="margin-inline: calc(var(--col-pad) * -1)"
+>
+  <!-- Dot grid: the placeholder when there is no image, and what shows while it loads. -->
+  <div aria-hidden="true" class="dotgrid absolute inset-0"></div>
+
+  {hasImage && (
+    <img
+      src={href(banner.src)}
+      srcset={
+        banner.srcSmall
+          ? `${href(banner.srcSmall)} 800w, ${href(banner.src)} ${banner.width}w`
+          : undefined
+      }
+      sizes="(min-width: 42rem) 42rem, 100vw"
+      width={banner.width}
+      height={banner.height}
+      alt={banner.alt}
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+      class="absolute inset-0 size-full object-cover object-center"
+    />
+  )}
+
+  <!-- Soft fades so the image sits in the page rather than on top of it. -->
+  <div
+    aria-hidden="true"
+    class="from-bg/90 pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t to-transparent"
+  ></div>
+  <div
+    aria-hidden="true"
+    class="from-bg/80 pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r to-transparent"
+  ></div>
+  <div
+    aria-hidden="true"
+    class="from-bg/80 pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l to-transparent"
+  ></div>
+
+  {clock.show && (
+    <p
+      class="absolute right-3 bottom-3 inline-flex items-center gap-2 rounded-md border border-white/10 bg-black/60 px-2 py-1 font-mono text-[11px] tracking-wider text-zinc-100 backdrop-blur-sm"
+      data-clock
+      data-time-zone={clock.timeZone}
+      title={`Current time, ${clock.label}`}
+    >
+      <span class="sr-only">Local time, {clock.label}:</span>
+      <time data-clock-time>--:--:--</time>
+      <span aria-hidden="true" class="text-zinc-400">
+        {clock.label}
+      </span>
+    </p>
+  )}
+</div>
+
+<script>
+  // Live clock. Re-reads the wall clock on every tick, so it stays correct even
+  // when a background tab throttles timers. Ticks are aligned to the second.
+  const clocks = document.querySelectorAll<HTMLElement>('[data-clock]');
+
+  clocks.forEach((el) => {
+    const timeEl = el.querySelector<HTMLTimeElement>('[data-clock-time]');
+    if (!timeEl) return;
+
+    const options: Intl.DateTimeFormatOptions = {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hourCycle: 'h23',
+    };
+    let formatter: Intl.DateTimeFormat;
+    try {
+      formatter = new Intl.DateTimeFormat('en-GB', { ...options, timeZone: el.dataset.timeZone });
+    } catch {
+      // Unknown time zone id — fall back to the visitor's own zone.
+      formatter = new Intl.DateTimeFormat('en-GB', options);
+    }
+
+    const tick = () => {
+      const now = new Date();
+      timeEl.textContent = formatter.format(now);
+      timeEl.dateTime = now.toISOString();
+    };
+
+    tick();
+    window.setTimeout(
+      () => {
+        tick();
+        window.setInterval(tick, 1000);
+      },
+      1000 - (Date.now() % 1000),
+    );
+  });
+</script>

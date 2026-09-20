@@ -23,7 +23,7 @@ Old URLs (`/about`, `/experience`, `/projects`, `/projects/<slug>`, `/skills`, `
 | Icons     | Inline SVG (Lucide paths) via `src/components/ui/Icon.astro`                 |
 | SEO       | Canonical URLs, Open Graph/Twitter tags, sitemap, `robots.txt`, social image |
 | Tooling   | ESLint, Prettier, `astro check`, a post-build HTML audit                     |
-| Client JS | Two small scripts: theme toggle and side-index scroll-spy                    |
+| Client JS | Three small scripts: theme toggle, side-index scroll-spy, banner clock       |
 
 No analytics, no trackers, no backend.
 
@@ -40,18 +40,19 @@ The site runs at <http://localhost:4321>.
 
 ## Commands
 
-| Command                | What it does                                                         |
-| ---------------------- | -------------------------------------------------------------------- |
-| `npm run dev`          | Start the dev server                                                 |
-| `npm run build`        | Production build into `dist/`                                        |
-| `npm run preview`      | Serve the production build locally                                   |
-| `npm run check`        | Type-check `.astro` and `.ts` files                                  |
-| `npm run lint`         | ESLint (including accessibility rules for Astro templates)           |
-| `npm run format`       | Format everything with Prettier                                      |
-| `npm run format:check` | Check formatting without writing                                     |
-| `npm run audit`        | Audit `dist/` — headings, landmarks, alt text, meta tags, links      |
-| `npm run verify`       | format check → lint → type check → build → audit (run before deploy) |
-| `npm run og`           | Regenerate `public/og.png` and the PNG favicons                      |
+| Command                | What it does                                                          |
+| ---------------------- | --------------------------------------------------------------------- |
+| `npm run dev`          | Start the dev server                                                  |
+| `npm run build`        | Production build into `dist/`                                         |
+| `npm run preview`      | Serve the production build locally                                    |
+| `npm run check`        | Type-check `.astro` and `.ts` files                                   |
+| `npm run lint`         | ESLint (including accessibility rules for Astro templates)            |
+| `npm run format`       | Format everything with Prettier                                       |
+| `npm run format:check` | Check formatting without writing                                      |
+| `npm run audit`        | Audit `dist/` — headings, landmarks, alt text, meta tags, links       |
+| `npm run verify`       | format check → lint → type check → build → audit (run before deploy)  |
+| `npm run og`           | Regenerate `public/og.png` and the PNG favicons                       |
+| `npm run banner -- X`  | Turn image `X` into the two hero-banner WebP files in `public/images` |
 
 ## Project structure
 
@@ -60,9 +61,10 @@ The site runs at <http://localhost:4321>.
 ├── astro.config.mjs                 site URL, redirects, integrations
 ├── archive/                         retired content and components, not built (safe to delete)
 ├── public/                          favicon, social image, CNAME, .nojekyll
-│                                    (add avatar.png and resume.pdf here)
+│   └── images/hero-banner*.webp     the hero banner (add avatar.png and resume.pdf here too)
 ├── scripts/
 │   ├── generate-og.mjs              builds og.png + PNG favicons
+│   ├── prepare-banner.mjs           converts any image into the hero banner WebP files
 │   └── audit-dist.mjs               post-build HTML audit
 └── src/
     ├── config/                      ★ everything you edit
@@ -76,8 +78,8 @@ The site runs at <http://localhost:4321>.
     │   ├── layout/                  SideIndex (desktop index + scroll-spy), Footer, Seo
     │   ├── ui/                      Button, Tag, TagList, Icon, ThemeToggle, SectionHeading
     │   ├── projects/ProjectCard     one project card
-    │   └── sections/                Section (shared shell), Hero, Experience, Projects,
-    │                                Skills, Highlights, Contact
+    │   └── sections/                Section (shared shell), Hero, HeroBanner (banner + live
+    │                                clock), Experience, Projects, Skills, Highlights, Contact
     ├── layouts/BaseLayout.astro     page shell: fonts, theme script, column edge lines
     ├── pages/                       index (the whole site), 404, robots.txt
     ├── styles/global.css            design tokens, dotted rules, column width
@@ -107,6 +109,11 @@ So to add a link later, replace the word `TODO` with the URL. Nothing else chang
 - `links.linkedin` — `TODO`. Add your profile URL.
 - `links.resume` — `TODO`. Put `resume.pdf` in `public/` and set this to `'/resume.pdf'`.
 - `site.avatar` — empty. Put a photo in `public/` and set this to `'/avatar.png'`.
+- `site.banner` — the cinematic banner above the profile row. To change the image, run
+  `npm run banner -- path/to/image.png`; it writes the two WebP files the config points at.
+  Update `alt` to describe the new picture. Set `src` to `''` for a plain dot-grid strip.
+- `site.clock` — the live clock in the banner corner (`timeZone` is any IANA id such as
+  `'Asia/Kolkata'`, `label` is what visitors see; `show: false` hides it).
 - `site.availability` — the status line in the hero (`show: false` hides it).
 - `hero.tagline`, `hero.bullets` — home page copy. Background, current work and interests
   live here; there is no separate About section.

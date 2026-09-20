@@ -41,6 +41,26 @@ export const site = {
     show: true,
     label: 'Open to backend & AI/ML roles',
   },
+
+  /**
+   * Cinematic banner above the profile row. Paths are inside /public.
+   * Generate both files from any image with:  npm run banner -- path/to/image.png
+   * Set `src` to '' to show a plain dot-grid strip instead.
+   */
+  banner: {
+    src: '/images/hero-banner.webp',
+    srcSmall: '/images/hero-banner-800.webp',
+    width: 1600,
+    height: 600,
+    alt: 'Illustration of a student coding at a desk by a window at night, with a lamp, a stack of books, a sleeping cat and a city skyline under a crescent moon.',
+  },
+
+  /** Live clock in the banner corner. Any IANA time zone id works. */
+  clock: {
+    show: true,
+    timeZone: 'Asia/Kolkata',
+    label: 'IST',
+  },
 } as const;
 
 export const links = {

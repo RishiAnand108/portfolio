@@ -12,6 +12,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "og": "node scripts/generate-og.mjs",
+    "banner": "node scripts/prepare-banner.mjs",
     "verify": "npm run format:check && npm run lint && npm run check && npm run build && npm run audit",
     "audit": "node scripts/audit-dist.mjs"
   },
