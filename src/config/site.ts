@@ -67,6 +67,7 @@ export const links = {
   email: 'risanand108@gmail.com',
   github: 'https://github.com/RishiAnand108',
   linkedin: 'https://www.linkedin.com/in/rishianand108/',
+  x: 'https://x.com/rishisingh108',
   // TODO (Rishikesh): put resume.pdf in /public and set this to '/resume.pdf' (or any external URL).
   resume: TODO,
 } as const;

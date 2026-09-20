@@ -23,6 +23,7 @@ interface Social {
 const allSocials: Social[] = [
   { label: 'GitHub', url: links.github, icon: 'github' },
   { label: 'LinkedIn', url: links.linkedin, icon: 'linkedin' },
+  { label: 'Twitter', url: links.x, icon: 'x' },
   { label: 'Email', url: links.email ? `mailto:${links.email}` : '', icon: 'mail' },
 ];
 const socials = allSocials.filter((s) => isShown(s.url));
