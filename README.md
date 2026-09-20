@@ -105,8 +105,7 @@ So to add a link later, replace the word `TODO` with the URL. Nothing else chang
 
 ### Personal details — `src/config/site.ts`
 
-- `links.email`, `links.github` — set.
-- `links.linkedin` — `TODO`. Add your profile URL.
+- `links.email`, `links.github`, `links.linkedin` — set.
 - `links.resume` — `TODO`. Put `resume.pdf` in `public/` and set this to `'/resume.pdf'`.
 - `site.avatar` — empty. Put a photo in `public/` and set this to `'/avatar.png'`.
 - `site.banner` — the cinematic banner above the profile row. To change the image, run

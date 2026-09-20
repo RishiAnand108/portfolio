@@ -1,9 +1,7 @@
-/** Project categories. The key is used in content frontmatter, the label is shown in the UI. */
+/** Project categories. The key is used in the project config, the label is shown on the card. */
 export const projectCategories = {
-  backend: 'Backend Engineering',
-  'ai-ml': 'AI / ML',
-  research: 'Research',
-  tools: 'Tools & Other',
+  'ai-ml-full-stack': 'AI/ML | Full-Stack',
+  'ai-ml-healthcare': 'AI/ML | Healthcare',
 } as const;
 
 export type ProjectCategory = keyof typeof projectCategories;

@@ -13,7 +13,6 @@
  * anything longer for the repository itself.
  */
 import type { ProjectCategory } from './categories';
-import { TODO } from './site';
 
 export type ProjectStatus = 'live' | 'building' | 'planned';
 
@@ -30,66 +29,21 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    id: 'crickathon-dashboard',
-    title: 'Crickathon Dashboard',
+    id: 'airaware',
+    title: 'AirAware',
     description:
-      'Dashboard platform with a FastAPI backend, user authentication, PostgreSQL storage and a containerised deployment.',
-    category: 'backend',
-    tech: ['FastAPI', 'PostgreSQL', 'Firebase', 'Next.js', 'Docker'],
-    // TODO (Rishikesh): set status once known ('live' | 'building' | 'planned').
-    github: TODO,
-    demo: TODO,
-  },
-  {
-    id: 'nagriksetu',
-    title: 'NagrikSetu',
-    description:
-      'Django platform where citizens file municipal complaints and track their status through to resolution.',
-    category: 'backend',
-    tech: ['Django', 'Python', 'PostgreSQL', 'REST APIs'],
-    github: 'https://github.com/RishiAnand108/Nagriksetu',
-    demo: TODO,
-  },
-  {
-    id: 'rail-optima',
-    title: 'Rail Optima',
-    description:
-      'Railway planning that pairs an XGBoost model for the predictive half of the problem with a CP-SAT solver for the hard constraints.',
-    category: 'ai-ml',
-    tech: ['Python', 'XGBoost', 'CP-SAT', 'Optimisation'],
-    github: 'https://github.com/RishiAnand108/Rail-optima',
-    demo: TODO,
+      "Forecasts NO2 and O3 levels 1 to 48 hours ahead for eight Indian metros, with calibrated uncertainty intervals and a system that declines to forecast when its inputs don't support one.",
+    category: 'ai-ml-full-stack',
+    tech: ['Python', 'XGBoost', 'FastAPI', 'Streamlit', 'MLflow', 'Docker'],
+    github: 'https://github.com/RishiAnand108/AirAware',
   },
   {
     id: 'cardiorhythm-ai',
-    // TODO (Rishikesh): the earlier content called this "Wearable ECG AI". Confirm the title
-    // and add the repository link if github.com/RishiAnand108/CardioRhythm-AI is the same project.
     title: 'CardioRhythm-AI',
     description:
-      'Research work on continuous ECG analysis with models light enough to run on wearable hardware.',
-    category: 'research',
-    tech: ['Python', 'Machine Learning', 'Signal Processing', 'Edge AI'],
-    github: TODO,
-  },
-  {
-    id: 'edubook-api',
-    title: 'Edubook API',
-    description:
-      'Backend API built with Django and Python over a relational database, with data models and business logic kept in one place.',
-    category: 'backend',
-    tech: ['Django', 'Python', 'REST APIs'],
-    github: 'https://github.com/RishiAnand108/Edubook-Api',
-    demo: TODO,
-  },
-  {
-    id: 'battery-inverter-calculator',
-    title: 'Battery & Inverter Calculator',
-    description:
-      'Sizing tool that works out the battery capacity and inverter rating a given load and backup duration actually need.',
-    category: 'tools',
-    // TODO (Rishikesh): add the technologies used.
-    tech: [],
-    github: TODO,
-    demo: TODO,
+      'Research prototype for real-time arrhythmia detection from wearable-style ECG streams, built around a compact CNN-LSTM quantized to TensorFlow Lite for edge deployment. Not a medical device.',
+    category: 'ai-ml-healthcare',
+    tech: ['Python', 'TensorFlow', 'FastAPI', 'Next.js', 'PostgreSQL', 'WebSocket'],
+    github: 'https://github.com/RishiAnand108/CardioRhythm-AI',
   },
 ];
