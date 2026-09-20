@@ -31,10 +31,10 @@ export const site = {
   locale: 'en',
 
   /**
-   * Profile photo shown in the hero, as a path inside /public (e.g. '/avatar.png').
-   * TODO (Rishikesh): add a photo to /public and set this. Until then a monogram is shown.
+   * Profile photo shown in the hero, as a path inside /public (e.g. '/avatar.webp').
+   * Leave empty to show a monogram fallback.
    */
-  avatar: '',
+  avatar: '/avatar.webp',
 
   /** Shown in the hero. Set `show: false` to hide it. */
   availability: {
