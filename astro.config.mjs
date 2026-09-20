@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 // SITE_URL  – the public origin of the deployed site (used for canonical URLs, sitemap, OG tags).
 // BASE_PATH – only needed when the site is served from a sub-path, e.g. GitHub Pages
 //             project sites: BASE_PATH=/portfolio
-const site = process.env.SITE_URL || 'https://example.com';
+const site = process.env.SITE_URL || 'https://rishixcodes.me';
 const base = process.env.BASE_PATH || '/';
 
 export default defineConfig({
