@@ -4,7 +4,7 @@ Personal portfolio of **Rishikesh Prasad**, Backend Engineer | AI/ML Builder.
 Live at <https://rishixcodes.me>.
 
 A fast, static, single-page site. Everything lives on the home page in one narrow centred
-column: Hero, Experience, Projects, Skills & Technologies, Highlights and Contact. The only
+column: Hero, Experience, Projects, Skills & Technologies and Highlights. The only
 navigation is the desktop side index; on mobile the column fills the screen and sections are
 reached by scrolling. Projects are simple cards — there are no case-study pages.
 
@@ -79,7 +79,7 @@ The site runs at <http://localhost:4321>.
     │   ├── ui/                      Button, Tag, TagList, Icon, ThemeToggle, SectionHeading
     │   ├── projects/ProjectCard     one project card
     │   └── sections/                Section (shared shell), Hero, HeroBanner (banner + live
-    │                                clock), Experience, Projects, Skills, Highlights, Contact
+    │                                clock), Experience, Projects, Skills, Highlights
     ├── layouts/BaseLayout.astro     page shell: fonts, theme script, column edge lines
     ├── pages/                       index (the whole site), 404, robots.txt
     ├── styles/global.css            design tokens, dotted rules, column width
@@ -157,7 +157,7 @@ Groups of plain strings. No ratings, no percentages.
 
 ### GitHub
 
-There is no GitHub section. The profile is linked from the hero socials, the Contact list,
+There is no GitHub section. The profile is linked from the hero socials,
 the "All repositories" button on the Projects heading and each project card.
 
 After changing your name or role, run `npm run og` to regenerate the social preview image.

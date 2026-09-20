@@ -16,7 +16,7 @@ const redirects = {
   '/skills': '/#skills',
   '/achievements': '/#highlights',
   '/highlights': '/#highlights',
-  '/contact': '/#contact',
+  '/contact': '/',
   '/projects/crickathon-dashboard': '/#projects',
   '/projects/nagriksetu': '/#projects',
   '/projects/rail-optima': '/#projects',

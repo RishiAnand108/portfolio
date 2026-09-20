@@ -81,7 +81,6 @@ export const sideIndex: NavItem[] = [
   { label: 'Projects', path: '/#projects', section: 'projects' },
   { label: 'Skills', path: '/#skills', section: 'skills' },
   { label: 'Highlights', path: '/#highlights', section: 'highlights' },
-  { label: 'Contact', path: '/#contact', section: 'contact' },
 ];
 
 export const hero = {
