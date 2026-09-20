@@ -4,7 +4,12 @@
 
 title: Project name
 category: backend # backend | ai-ml | research | tools
-summary: One sentence describing what the project is. Shown on the Projects page and in search results.
+summary: One sentence describing what the project is. Shown on the card and in search results.
+problem: One or two sentences on the problem this solves. Optional — omit the key to hide the block.
+features: # optional
+  - What the project actually does
+  - One bullet per capability
+contribution: What you personally designed and built. Optional.
 tech: [Python, FastAPI]
 order: 10 # lower numbers are listed first
 draft: true # shows a "work in progress" note on the case study; set to false when complete

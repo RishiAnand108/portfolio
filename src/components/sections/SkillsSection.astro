@@ -1,0 +1,31 @@
+---
+import Section from './Section.astro';
+import TagList from '@/components/ui/TagList.astro';
+import { skillGroups } from '@/config/skills';
+---
+
+<Section
+  id="skills"
+  index="04"
+  eyebrow="Skills"
+  title="What I work with, grouped by where it fits."
+>
+  <p slot="aside" class="text-muted mt-6 max-w-xs text-[0.9375rem] text-pretty">
+    Listed without ratings or progress bars — a percentage next to a language is not something
+    anyone can measure.
+  </p>
+
+  <ul class="divide-line border-line divide-y border-y">
+    {skillGroups.map((group) => (
+      <li class="grid gap-3 py-6 sm:grid-cols-[10rem_1fr] sm:gap-8">
+        <div>
+          <h3 class="font-medium">{group.title}</h3>
+        </div>
+        <div>
+          <TagList items={group.items} label={`${group.title} skills`} />
+          <p class="text-muted mt-3 text-[0.9375rem] text-pretty">{group.note}</p>
+        </div>
+      </li>
+    ))}
+  </ul>
+</Section>

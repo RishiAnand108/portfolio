@@ -1,5 +1,5 @@
 /**
- * Single source of truth for personal details, links and homepage copy.
+ * Single source of truth for personal details, links and page copy.
  * Edit this file to update the site — no component changes required.
  *
  * Links left as an empty string are hidden everywhere on the site,
@@ -8,7 +8,10 @@
 
 export interface NavItem {
   label: string;
+  /** Anchor on the single page, or a real path. */
   path: string;
+  /** Section id used by the scroll-spy. Omit for plain links. */
+  section?: string;
 }
 
 export interface FocusItem {
@@ -20,10 +23,10 @@ export const site = {
   name: 'Rishikesh',
   /** Full name, used where the longer form reads better (e.g. the footer). */
   fullName: 'Rishikesh Prasad',
-  title: 'Rishikesh — Backend Engineer · AI/ML Builder',
-  role: 'Backend Engineer · AI/ML Builder',
+  title: 'Rishikesh — Backend Engineer · AI/ML Developer',
+  role: 'Backend Engineer · AI/ML Developer',
   description:
-    'Rishikesh is a backend engineer and AI/ML builder working with Python, APIs, databases, automation and machine learning.',
+    'Rishikesh is a backend engineer and AI/ML developer working with Python, FastAPI, Django, PostgreSQL and machine learning to build reliable APIs, data pipelines and automation.',
   locale: 'en',
 
   /** Shown in the hero. Set `show: false` to hide it. */
@@ -41,28 +44,29 @@ export const site = {
 } as const;
 
 export const links = {
-  // TODO: replace with your real address before deploying.
   email: 'risanand108@gmail.com',
-  // Taken from the local git user name — change it if your profile differs.
   github: 'https://github.com/RishiAnand108',
-  // TODO: add your LinkedIn profile URL, e.g. https://www.linkedin.com/in/your-handle
+  // TODO (Rishikesh): add your LinkedIn profile URL, e.g. https://www.linkedin.com/in/your-handle
   linkedin: '',
-  // TODO: put resume.pdf in /public and set this to '/resume.pdf' (or use any external URL).
+  // TODO (Rishikesh): put resume.pdf in /public and set this to '/resume.pdf' (or any external URL).
   resume: '',
 } as const;
 
+/** Single-page anchors. `section` must match the id rendered by each section component. */
 export const nav: NavItem[] = [
-  { label: 'Home', path: '/' },
-  { label: 'Projects', path: '/projects/' },
-  { label: 'About', path: '/about/' },
-  { label: 'Experience', path: '/experience/' },
-  { label: 'Contact', path: '/contact/' },
+  { label: 'Home', path: '/#home', section: 'home' },
+  { label: 'About', path: '/#about', section: 'about' },
+  { label: 'Experience', path: '/#experience', section: 'experience' },
+  { label: 'Projects', path: '/#projects', section: 'projects' },
+  { label: 'Skills', path: '/#skills', section: 'skills' },
+  { label: 'Achievements', path: '/#achievements', section: 'achievements' },
+  { label: 'Contact', path: '/#contact', section: 'contact' },
 ];
 
 export const hero = {
   headline: 'Building reliable backend systems and practical AI solutions.',
   supporting:
-    'I work with Python, APIs, databases, automation and machine learning to turn ideas into useful, dependable products.',
+    'I’m a backend engineer and AI/ML developer working with Python, FastAPI, Django and PostgreSQL. I build APIs, data pipelines and automation, and I use machine learning where it genuinely solves the problem.',
 };
 
 /**
@@ -71,13 +75,13 @@ export const hero = {
  */
 export const profile: Record<string, string | string[]> = {
   role: 'Backend Engineer',
-  also: 'AI/ML Builder',
-  education: 'B.Tech, AI & DS',
+  also: 'AI/ML Developer',
+  education: 'B.Tech, AI & Data Science',
   stack: ['Python', 'FastAPI', 'Django', 'PostgreSQL', 'Docker'],
-  interests: ['APIs', 'databases', 'automation', 'machine learning'],
+  interests: ['APIs', 'automation', 'scalable systems', 'audio AI'],
 };
 
-/** Homepage "Currently building" section. */
+/** "Currently focused on" list, shown inside the About section. */
 export const currentFocus: FocusItem[] = [
   {
     area: 'Backend engineering',
@@ -86,17 +90,14 @@ export const currentFocus: FocusItem[] = [
   {
     area: 'AI / ML',
     detail:
-      'Applying machine learning and optimization to practical planning and health-signal problems.',
+      'Supervised learning with scikit-learn and XGBoost, plus LLM integrations inside real products.',
   },
   {
-    area: 'Developer tools',
-    detail: 'Automating repetitive work with scripts, containers and small internal tools.',
+    area: 'Automation',
+    detail: 'Replacing repetitive manual work with scripts, scheduled jobs and internal tooling.',
   },
   {
     area: 'Learning',
-    detail: 'Going deeper on system design, cloud infrastructure and deploying models reliably.',
+    detail: 'Going deeper on system design, scalable architecture and deploying models reliably.',
   },
 ];
-
-export const aboutPreview =
-  'I’m a final-year B.Tech student in AI & Data Science who enjoys the unglamorous parts of software: clean APIs, sensible schemas, and systems that keep working. I like pairing that foundation with machine learning when it genuinely solves the problem.';

@@ -1,0 +1,94 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import TagList from '@/components/ui/TagList.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import type { Project } from '@/utils/content';
+import { href } from '@/utils/url';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { title, summary, problem, features, contribution, tech, github, demo, draft } = project.data;
+const caseStudyUrl = href(`/projects/${project.id}/`);
+
+const externalLinks = [
+  github && { label: 'GitHub', url: github },
+  demo && { label: 'Live demo', url: demo },
+].filter((l): l is { label: string; url: string } => Boolean(l));
+---
+
+<article class="border-line bg-surface/40 rounded-xl border p-6 sm:p-7">
+  <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+    <h4 class="text-xl font-medium tracking-tight">
+      <a href={caseStudyUrl} class="hover:text-accent transition-colors">
+        {title}
+      </a>
+    </h4>
+    {draft && <DraftBadge />}
+  </div>
+
+  <p class="text-muted mt-3 text-pretty">{summary}</p>
+
+  {problem && (
+    <div class="mt-5">
+      <h5 class="text-muted font-mono text-xs">Problem</h5>
+      <p class="mt-1.5 text-[0.9375rem] text-pretty">{problem}</p>
+    </div>
+  )}
+
+  {features.length > 0 && (
+    <div class="mt-5">
+      <h5 class="text-muted font-mono text-xs">Key features</h5>
+      <ul class="mt-2 space-y-1.5">
+        {features.map((feature) => (
+          <li class="flex gap-3 text-[0.9375rem]">
+            <span aria-hidden="true" class="bg-line mt-3 h-px w-3 shrink-0" />
+            <span class="text-pretty">{feature}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+
+  {contribution && (
+    <div class="mt-5">
+      <h5 class="text-muted font-mono text-xs">My contribution</h5>
+      <p class="mt-1.5 text-[0.9375rem] text-pretty">{contribution}</p>
+    </div>
+  )}
+
+  {tech.length > 0 && (
+    <div class="mt-5">
+      <h5 class="text-muted font-mono text-xs">Tech stack</h5>
+      <TagList items={tech} label={`Technologies used in ${title}`} class="mt-2" />
+    </div>
+  )}
+
+  <div class="border-line mt-6 flex flex-wrap items-center gap-x-6 border-t pt-2">
+    <a
+      href={caseStudyUrl}
+      class="group link inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium"
+    >
+      Case study<span class="sr-only"> for {title}</span>
+      <Icon
+        name="arrow-right"
+        size={16}
+        class="transition-transform duration-200 group-hover:translate-x-0.5"
+      />
+    </a>
+    {externalLinks.map((link) => (
+      <a
+        href={link.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-muted hover:text-accent inline-flex min-h-11 items-center gap-1.5 text-[0.9375rem] transition-colors"
+      >
+        {link.label}
+        <span class="sr-only">for {title} (opens in a new tab)</span>
+        <Icon name="arrow-up-right" size={15} />
+      </a>
+    ))}
+  </div>
+</article>

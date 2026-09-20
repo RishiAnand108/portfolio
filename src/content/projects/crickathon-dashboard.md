@@ -2,10 +2,19 @@
 title: Crickathon Dashboard
 category: backend
 summary: A dashboard platform built around backend APIs, authentication, database integration and containerised deployment.
+problem: TODO (Rishikesh) — describe who needed this dashboard and what they could not do before it existed.
+features:
+  - Backend API layer serving the dashboard
+  - User authentication
+  - Relational database behind the served data
+  - Containerised deployment
+contribution: TODO (Rishikesh) — name the parts you designed and built, and say whether this was team work.
 tech: [FastAPI, PostgreSQL, Firebase, Next.js, Docker]
 order: 1
 draft: true
-# github: https://github.com/<user>/<repo>
+# TODO (Rishikesh): I could not find a public repository for this project.
+# Add the URL here if one exists, or leave it out and no link will render.
+# github: https://github.com/RishiAnand108/<repo>
 # demo: https://
 ---
 

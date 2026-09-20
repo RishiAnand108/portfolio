@@ -1,0 +1,45 @@
+---
+import Section from './Section.astro';
+import { aboutIntro, aboutSections, technicalFocus } from '@/config/about';
+import { currentFocus } from '@/config/site';
+---
+
+<Section id="about" index="01" eyebrow="About" title={aboutIntro.title}>
+  <dl slot="aside" class="divide-line border-line mt-8 divide-y border-y">
+    {technicalFocus.map((row) => (
+      <div class="grid grid-cols-[5.5rem_1fr] gap-4 py-3 text-[0.9375rem]">
+        <dt class="text-muted font-mono text-xs leading-6">{row.group}</dt>
+        <dd class="text-pretty">{row.items.join(', ')}</dd>
+      </div>
+    ))}
+  </dl>
+
+  <p class="text-lead max-w-2xl text-pretty">{aboutIntro.lead}</p>
+
+  <div class="mt-12 space-y-10">
+    {aboutSections.map((section) => (
+      <div>
+        <h3 id={section.id} class="text-xl font-medium tracking-tight">
+          {section.title}
+        </h3>
+        <div class="text-muted mt-3 max-w-2xl space-y-3 text-[1.0625rem] leading-relaxed">
+          {section.paragraphs.map((p) => (
+            <p class="text-pretty">{p}</p>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="mt-12">
+    <h3 class="text-xl font-medium tracking-tight">Currently focused on</h3>
+    <dl class="divide-line border-line mt-4 divide-y border-y">
+      {currentFocus.map((item) => (
+        <div class="grid gap-1 py-4 sm:grid-cols-[12rem_1fr] sm:gap-6">
+          <dt class="font-medium">{item.area}</dt>
+          <dd class="text-muted text-pretty">{item.detail}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</Section>

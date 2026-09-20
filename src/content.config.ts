@@ -12,6 +12,12 @@ const projects = defineCollection({
       category: z.enum(categoryKeys),
       /** One-line description used on the Projects page and in meta tags. */
       summary: z.string(),
+      /** One or two sentences on the problem the project solves. Shown on the card. */
+      problem: z.string().optional(),
+      /** Short bullets — the things the project actually does. */
+      features: z.array(z.string()).default([]),
+      /** What you personally designed and built. Be specific on team projects. */
+      contribution: z.string().optional(),
       tech: z.array(z.string()).default([]),
       /** Lower numbers appear first. */
       order: z.number().default(100),

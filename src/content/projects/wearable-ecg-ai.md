@@ -2,10 +2,18 @@
 title: Wearable ECG AI
 category: research
 summary: Research-oriented work on continuous ECG analysis with machine learning models that are feasible to run at the edge.
-tech: [Machine Learning, Signal Processing, Edge AI]
+problem: Continuous ECG analysis is usually done by sending signals to a large model in the cloud. On a wearable that is the wrong shape of solution — the device has a power budget, a latency budget, and no guarantee of connectivity.
+features:
+  - Works on long-running ECG streams rather than short, clean clips
+  - Signal processing applied before any model sees the data
+  - Model size and compute cost treated as design constraints, not afterthoughts
+contribution: TODO (Rishikesh) — describe your part, and say whether this was team or academic work.
+tech: [Python, Machine Learning, Signal Processing, Edge AI]
 order: 4
 draft: true
-# github: https://github.com/<user>/<repo>
+# TODO (Rishikesh): is this the same project as github.com/RishiAnand108/CardioRhythm-AI?
+# If so, set the link below. I did not assume it, because the names do not match.
+# github: https://github.com/RishiAnand108/CardioRhythm-AI
 ---
 
 ## Overview

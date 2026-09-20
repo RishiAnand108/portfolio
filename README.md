@@ -1,10 +1,13 @@
-# RishiAnand108.github.io
 # Rishikesh — Portfolio
 
-Personal portfolio of **Rishikesh**, Backend Engineer · AI/ML Builder.
+Personal portfolio of **Rishikesh Prasad**, Backend Engineer · AI/ML Developer.
 
-A fast, static, content-driven site: the homepage introduces the person, the Projects page
-showcases the work, and each project has a case study page for technical depth.
+A fast, static, content-driven site. Everything lives on a single page with seven anchored
+sections — Home, About, Experience, Projects, Skills, Achievements, Contact — and each project
+keeps a separate case study page for technical depth.
+
+The old section URLs (`/about`, `/experience`, `/projects`, `/contact`) redirect to their
+anchors, so existing links keep working.
 
 ## Tech stack
 
@@ -51,17 +54,20 @@ The site runs at <http://localhost:4321>.
 ## Project structure
 
 ```text
-├── .github/workflows/deploy-github-pages.yml   GitHub Pages deployment
-├── astro.config.mjs                            site URL, base path, integrations
+├── .github/workflows/deploy.yml                GitHub Pages deployment
+├── astro.config.mjs                            site URL, redirects, integrations
 ├── netlify.toml                                Netlify build settings
-├── public/                                     favicon, social image (add resume.pdf here)
+├── public/                                     favicon, social image, CNAME, .nojekyll
+│                                               (add resume.pdf here)
 ├── scripts/
 │   ├── generate-og.mjs                         builds og.png + PNG favicons
 │   └── audit-dist.mjs                          post-build HTML audit
 └── src/
     ├── config/
-    │   ├── site.ts                             ★ name, links, hero copy, homepage sections
-    │   ├── about.ts                            ★ About page copy
+    │   ├── site.ts                             ★ name, links, nav anchors, hero copy
+    │   ├── about.ts                            ★ About section copy
+    │   ├── skills.ts                           ★ skill groups
+    │   ├── achievements.ts                     ★ achievements and community work
     │   └── categories.ts                       project categories
     ├── content/
     │   ├── projects/                           ★ one Markdown file per project
@@ -70,11 +76,14 @@ The site runs at <http://localhost:4321>.
     ├── components/
     │   ├── layout/                             Navbar, Footer, Seo
     │   ├── ui/                                 Button, Tag, Icon, ThemeToggle, SocialLinks, …
-    │   ├── projects/                           ProjectList (filter), ProjectRow, ProjectPager
-    │   └── sections/                           Hero, CurrentFocus, Timeline, ContactCta, …
+    │   ├── projects/                           ProjectCard, ProjectPager
+    │   └── sections/                           Section (shared shell), Hero, AboutSection,
+    │                                           ExperienceSection, ProjectsSection,
+    │                                           SkillsSection, AchievementsSection,
+    │                                           ContactSection, Timeline, ProfileCard
     ├── layouts/                                BaseLayout, ProjectLayout (case study template)
-    ├── pages/                                  /, /projects, /projects/[slug], /about,
-    │                                           /experience, /contact, 404, robots.txt
+    ├── pages/                                  / (the whole site), /projects/[slug],
+    │                                           404, robots.txt
     ├── styles/global.css                       design tokens, type scale, prose styles
     └── utils/                                  URL helpers (base-path aware), content queries
 ```
@@ -85,7 +94,7 @@ Files marked ★ are the ones you edit to change content. Presentation lives els
 
 Everything personal is in **`src/config/site.ts`**:
 
-- `links.email` — **currently a placeholder (`risanand108@gmail.com`). Replace it.**
+- `links.email` — your contact address.
 - `links.github` — set from the local git user name; change if needed.
 - `links.linkedin` — empty. Add your profile URL.
 - `links.resume` — empty. Put `resume.pdf` in `public/` and set this to `/resume.pdf`.
@@ -122,9 +131,12 @@ After changing your name or role, run `npm run og` to regenerate the social prev
    appears in the "On this page" sidebar. The template lists the recommended sections for
    backend and AI/ML projects.
 
-The project then appears on `/projects`, in the right category filter, and in the
-previous/next navigation — no UI changes needed. To add a new category, edit
+The project then appears in the Projects section under its category heading, and in the
+previous/next navigation on case studies — no UI changes needed. To add a new category, edit
 `src/config/categories.ts`.
+
+Three optional frontmatter fields drive the extra detail on each card: `problem`, `features`
+(a list) and `contribution`. Leave one out and that block is simply not rendered.
 
 ### Draft content
 
@@ -142,42 +154,44 @@ Copy `src/content/experience/_template.md`, rename it without the underscore, an
 `role`, `organization`, `date`, `responsibilities`, `technologies` and `links`.
 Use `order` to control position (lowest first).
 
-## Environment variables
+## Site URL and base path
 
-| Variable    | Required           | Purpose                                                                                                                       |
-| ----------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| `SITE_URL`  | Yes, for deploys   | Public origin, e.g. `https://rishikesh.dev`. Used for canonical URLs, sitemap and OG tags. Defaults to `https://example.com`. |
-| `BASE_PATH` | Only for sub-paths | e.g. `/portfolio` for a GitHub Pages project site. Defaults to `/`.                                                           |
+Both are set directly in `astro.config.mjs`:
 
-There are no secrets. See `.env.example`.
+```js
+site: 'https://rishixcodes.me',
+base: '/',
+```
 
-> On Windows Git Bash, a value such as `/portfolio` is rewritten into a Windows path.
-> Set `BASE_PATH` from PowerShell, or prefix the command with `MSYS_NO_PATHCONV=1`.
+They are **not** read from environment variables. Injecting a `BASE_PATH` from CI was what
+previously produced `/portfolio/_astro/…` asset URLs and 404s on the custom domain — change
+them here instead. There are no secrets and no required environment variables.
+
+All internal links go through `href()` in `src/utils/url.ts`, so changing `base` is enough to
+move the site to a sub-path.
 
 ## Deployment
 
 The build output is plain static files in `dist/`.
 
+### GitHub Pages (current setup)
+
+1. _Settings → Pages_ → **Source: GitHub Actions**.
+2. `.github/workflows/deploy.yml` builds and deploys on every push to `main`. It is the only
+   deployment workflow — a second, competing one was removed because two workflows publishing
+   to Pages on the same push race each other.
+3. `public/CNAME` (`rishixcodes.me`) and `public/.nojekyll` are copied into `dist/` by the
+   build, so the artifact carries its own domain and keeps Jekyll from stripping `_astro/`.
+   Keep them in `public/` — at the repository root they never reach the deployed output.
+
 ### Vercel
 
-1. Import the repository — Vercel detects Astro automatically
-   (build command `npm run build`, output `dist`).
-2. Add the environment variable `SITE_URL` with your production URL.
+Import the repository — Vercel detects Astro automatically (build `npm run build`, output
+`dist`). Update `site` in `astro.config.mjs` if the origin changes.
 
 ### Netlify
 
-1. Import the repository. `netlify.toml` already sets the build command and publish directory.
-2. Add `SITE_URL` under _Site configuration → Environment variables_.
-
-### GitHub Pages
-
-1. Push to GitHub, then open _Settings → Pages_ and set **Source** to **GitHub Actions**.
-2. The included workflow (`.github/workflows/deploy-github-pages.yml`) builds and deploys on
-   every push to `main`. It sets `SITE_URL` and `BASE_PATH` from the repository name.
-3. If the repository is named `<username>.github.io`, or you use a custom domain, remove the
-   `BASE_PATH` line from the workflow and set `SITE_URL` to the real origin.
-
-All internal links go through `href()` in `src/utils/url.ts`, so the site works from a sub-path.
+Import the repository. `netlify.toml` already sets the build command and publish directory.
 
 ## Contact form
 
@@ -191,8 +205,8 @@ success message after the provider confirms delivery.
 - Semantic landmarks, one `<h1>` per page, skip link, visible focus states
 - Colour contrast of all text/background token pairs is at least 5.1:1 (WCAG AA)
 - Mobile menu is a disclosure with `aria-expanded`, closes on `Escape` and returns focus
-- Project filters use `aria-pressed` and announce results through a live region;
-  without JavaScript, all projects are simply listed
+- The nav scroll-spy sets `aria-current="location"` on the section in view; without
+  JavaScript every anchor link still works and nothing is hidden
 - `prefers-reduced-motion` disables all animation
 - Theme follows the system preference until the visitor chooses one (stored in `localStorage`)
 - Fonts are self-hosted; pages ship no framework JavaScript

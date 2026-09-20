@@ -5,7 +5,12 @@ import ProfileCard from './ProfileCard.astro';
 import { hero, site } from '@/config/site';
 ---
 
-<section class="container-page pt-14 pb-16 sm:pt-20 lg:pt-28 lg:pb-24" aria-labelledby="hero-title">
+<section
+  id="home"
+  class="container-page pt-14 pb-16 sm:pt-20 lg:pt-28 lg:pb-24"
+  aria-labelledby="hero-title"
+  data-section
+>
   <div class="grid items-end gap-12 lg:grid-cols-12 lg:gap-10">
     <div class="lg:col-span-8">
       {site.availability.show && (
@@ -17,7 +22,7 @@ import { hero, site } from '@/config/site';
 
       <h1 id="hero-title" class="reveal" style="--i:1">
         <span class="text-muted block text-base sm:text-lg">
-          <span class="text-ink font-medium">{site.name}</span>
+          <span class="text-ink font-medium">{site.fullName}</span>
           <span aria-hidden="true" class="mx-1.5">
             —
           </span>
@@ -34,15 +39,15 @@ import { hero, site } from '@/config/site';
       </p>
 
       <div class="reveal mt-10 flex flex-col gap-3 min-[420px]:flex-row" style="--i:3">
-        <Button href="/projects/" icon="arrow-right">
-          Explore Projects
+        <Button href="/#projects" icon="arrow-right">
+          View Projects
         </Button>
-        <Button href="/contact/" variant="secondary">
+        <Button href="/#contact" variant="secondary">
           Contact Me
         </Button>
       </div>
 
-      <SocialLinks include={['github', 'linkedin']} class="reveal mt-6" />
+      <SocialLinks include={['github', 'linkedin', 'resume']} class="reveal mt-7" />
     </div>
 
     <div class="reveal lg:col-span-4" style="--i:4">

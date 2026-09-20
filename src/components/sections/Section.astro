@@ -1,0 +1,31 @@
+---
+/**
+ * Shared shell for every section on the single page: an anchor target, a
+ * two-column grid with the heading on the left, and a divider above.
+ * Keeping it here means the seven sections stay visually identical.
+ */
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+
+interface Props {
+  /** Anchor id — must match the `section` value in the nav config. */
+  id: string;
+  index: string;
+  eyebrow: string;
+  title: string;
+}
+
+const { id, index, eyebrow, title } = Astro.props;
+---
+
+<section id={id} class="border-line border-t" aria-labelledby={`${id}-title`} data-section>
+  <div class="container-page section grid gap-10 lg:grid-cols-12">
+    <div class="lg:col-span-4 lg:sticky lg:top-28 lg:self-start">
+      <SectionHeading id={`${id}-title`} index={index} eyebrow={eyebrow} title={title} />
+      <slot name="aside" />
+    </div>
+
+    <div class="lg:col-span-8">
+      <slot />
+    </div>
+  </div>
+</section>

@@ -4,7 +4,7 @@ import sharp from 'sharp';
 import { readFile } from 'node:fs/promises';
 
 const NAME = 'Rishikesh';
-const ROLE = 'Backend Engineer · AI/ML Builder';
+const ROLE = 'Backend Engineer · AI/ML Developer';
 const LINE_1 = 'Building reliable backend systems';
 const LINE_2 = 'and practical AI solutions.';
 

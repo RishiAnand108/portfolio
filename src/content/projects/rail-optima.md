@@ -2,10 +2,16 @@
 title: Rail Optima
 category: ai-ml
 summary: Machine learning combined with constraint optimization for railway-related planning.
-tech: [XGBoost, CP-SAT, Machine Learning, Optimization]
+problem: Planning problems have two halves that need different tools — quantities that must be estimated from data, and hard rules a valid plan can never break. Forcing one technique to do both jobs does neither well.
+features:
+  - Gradient-boosted model (XGBoost) for the predictive half of the problem
+  - CP-SAT constraint solver for the rules a plan must respect
+  - Predictions feed the solver rather than replacing it
+contribution: TODO (Rishikesh) — describe your part, and say whether this was team work.
+tech: [Python, XGBoost, CP-SAT, Machine Learning, Optimization]
 order: 3
 draft: true
-# github: https://github.com/<user>/<repo>
+github: https://github.com/RishiAnand108/Rail-optima
 # demo: https://
 ---
 

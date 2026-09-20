@@ -3,9 +3,14 @@ import Icon from '@/components/ui/Icon.astro';
 import ThemeToggle from '@/components/ui/ThemeToggle.astro';
 import SocialLinks from '@/components/ui/SocialLinks.astro';
 import { nav, site } from '@/config/site';
-import { href, isActive } from '@/utils/url';
+import { href, normalizePath } from '@/utils/url';
 
-const { pathname } = Astro.url;
+/**
+ * The nav points at anchors on the single page. On the home page a scroll-spy
+ * marks the section in view; on a case-study page nothing is marked current,
+ * and the links navigate home to the right anchor.
+ */
+const isHome = normalizePath(Astro.url.pathname) === '/';
 ---
 
 <header
@@ -14,45 +19,42 @@ const { pathname } = Astro.url;
 >
   <div class="container-page flex h-16 items-center justify-between gap-4">
     <a
-      href={href('/')}
+      href={href('/#home')}
       class="hover:text-accent font-mono text-sm font-medium tracking-[0.22em] uppercase transition-colors"
-      aria-label={`${site.name} — home`}
+      aria-label={`${site.name} — top of page`}
     >
       {site.name}
     </a>
 
     <div class="flex items-center gap-1">
-      <nav aria-label="Main" class="mr-3 hidden md:block">
-        <ul class="flex items-center gap-1">
-          {nav.map((item) => {
-            const active = isActive(pathname, item.path);
-            return (
-              <li>
-                <a
-                  href={href(item.path)}
-                  aria-current={active ? 'page' : undefined}
-                  class:list={[
-                    'relative inline-flex min-h-11 items-center px-3 text-[0.9375rem] transition-colors',
-                    active ? 'text-ink font-medium' : 'text-muted hover:text-ink',
-                  ]}
-                >
-                  {item.label}
-                  {active && (
-                    <span aria-hidden="true" class="bg-accent absolute inset-x-3 bottom-1.5 h-px" />
-                  )}
-                </a>
-              </li>
-            );
-          })}
+      <nav aria-label="Main" class="mr-2 hidden lg:block">
+        <ul class="flex items-center gap-0.5">
+          {nav.map((item) => (
+            <li>
+              <a
+                href={href(item.path)}
+                data-nav-link
+                data-section-link={item.section}
+                class="text-muted hover:text-ink relative inline-flex min-h-11 items-center px-2.5 text-[0.9375rem] transition-colors"
+              >
+                {item.label}
+                <span
+                  aria-hidden="true"
+                  data-nav-underline
+                  class="bg-accent absolute inset-x-2.5 bottom-1.5 h-px opacity-0"
+                />
+              </a>
+            </li>
+          ))}
         </ul>
       </nav>
 
-      <SocialLinks variant="icons" include={['github', 'linkedin']} class="hidden md:flex" />
+      <SocialLinks variant="icons" include={['github', 'linkedin']} class="hidden sm:flex" />
       <ThemeToggle />
 
       <button
         type="button"
-        class="text-ink -mr-2 inline-flex size-11 items-center justify-center rounded-full md:hidden"
+        class="text-ink -mr-2 inline-flex size-11 items-center justify-center rounded-full lg:hidden"
         aria-expanded="false"
         aria-controls="mobile-menu"
         aria-label="Open menu"
@@ -68,42 +70,40 @@ const { pathname } = Astro.url;
     </div>
   </div>
 
-  <div id="mobile-menu" class="border-line bg-bg border-t md:hidden" hidden data-menu-panel>
-    <nav aria-label="Mobile" class="container-page py-4">
+  <div id="mobile-menu" class="border-line bg-bg border-t lg:hidden" hidden data-menu-panel>
+    <nav aria-label="Mobile" class="container-page py-3">
       <ul class="divide-line divide-y">
-        {nav.map((item) => {
-          const active = isActive(pathname, item.path);
-          return (
-            <li>
-              <a
-                href={href(item.path)}
-                aria-current={active ? 'page' : undefined}
-                class:list={[
-                  'font-display flex min-h-14 items-center justify-between text-2xl',
-                  active ? 'text-accent' : 'text-ink',
-                ]}
-              >
-                {item.label}
-                {active && <span class="text-muted font-mono text-xs">current</span>}
-              </a>
-            </li>
-          );
-        })}
+        {nav.map((item) => (
+          <li>
+            <a
+              href={href(item.path)}
+              data-nav-link
+              data-section-link={item.section}
+              class="text-ink flex min-h-14 items-center justify-between text-lg font-medium"
+            >
+              {item.label}
+              <span class="text-muted font-mono text-xs opacity-0" data-nav-current>
+                current
+              </span>
+            </a>
+          </li>
+        ))}
       </ul>
-      <SocialLinks class="mt-5" />
+      <SocialLinks class="mt-4 mb-2" />
     </nav>
   </div>
 </header>
 
-<script>
-  const button = document.querySelector<HTMLButtonElement>('[data-menu-button]');
-  const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+<script is:inline define:vars={{ isHome }}>
+  // --- Mobile menu -------------------------------------------------------
+  const button = document.querySelector('[data-menu-button]');
+  const panel = document.querySelector('[data-menu-panel]');
 
   if (button && panel) {
-    const openIcon = button.querySelector<HTMLElement>('[data-menu-icon="open"]');
-    const closeIcon = button.querySelector<HTMLElement>('[data-menu-icon="close"]');
+    const openIcon = button.querySelector('[data-menu-icon="open"]');
+    const closeIcon = button.querySelector('[data-menu-icon="close"]');
 
-    const setOpen = (open: boolean) => {
+    const setOpen = (open) => {
       button.setAttribute('aria-expanded', String(open));
       button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
       panel.hidden = !open;
@@ -124,9 +124,62 @@ const { pathname } = Astro.url;
 
     panel.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
 
-    // Close the menu if the viewport grows past the mobile breakpoint.
-    window.matchMedia('(min-width: 768px)').addEventListener('change', (e) => {
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => {
       if (e.matches) setOpen(false);
     });
+  }
+
+  // --- Scroll-spy --------------------------------------------------------
+  // Marks the section currently in view. Home page only; no effect elsewhere.
+  // Deferred: this script runs while the header is parsed, before <main> and
+  // its sections exist, so querying for them now would find nothing.
+  const startScrollSpy = () => {
+    const sections = [...document.querySelectorAll('[data-section]')];
+    const links = [...document.querySelectorAll('[data-nav-link]')];
+
+    if (sections.length && links.length && 'IntersectionObserver' in window) {
+      const visible = new Set();
+
+      const setCurrent = (id) => {
+        links.forEach((link) => {
+          const match = link.dataset.sectionLink === id;
+          if (match) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+          link.classList.toggle('text-ink', match);
+          link.classList.toggle('text-muted', !match);
+          const underline = link.querySelector('[data-nav-underline]');
+          if (underline) underline.classList.toggle('opacity-0', !match);
+          const marker = link.querySelector('[data-nav-current]');
+          if (marker) marker.classList.toggle('opacity-0', !match);
+        });
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) visible.add(entry.target.id);
+            else visible.delete(entry.target.id);
+          });
+          // The deepest visible section wins: when two overlap at a boundary,
+          // the one being scrolled into is the one worth marking.
+          let current = null;
+          for (const section of sections) if (visible.has(section.id)) current = section;
+          if (current) setCurrent(current.id);
+        },
+        // Top offset matches `scroll-padding-top` in global.css, so a section
+        // counts from exactly where an anchor jump parks it.
+        { rootMargin: '-96px 0px -55% 0px', threshold: 0 },
+      );
+
+      sections.forEach((section) => observer.observe(section));
+    }
+  };
+
+  if (isHome) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', startScrollSpy, { once: true });
+    } else {
+      startScrollSpy();
+    }
   }
 </script>

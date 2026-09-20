@@ -3,7 +3,7 @@ dist/
 .astro/
 .env
 .env.*
-!.env.example
+# (no .env.example — site URL and base live in astro.config.mjs)
 .DS_Store
 .vercel/
 .netlify/

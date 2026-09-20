@@ -2,10 +2,16 @@
 title: Edubook API
 category: backend
 summary: A backend API project built with Django and Python on top of a relational database.
-tech: [Django, Python, REST APIs, Database]
-order: 2
+problem: TODO (Rishikesh) — the repository describes this as an API for testing library functionality. Say what it was actually for.
+features:
+  - Django data models backing the API
+  - REST endpoints over those models
+  - Business logic kept in one structured place
+contribution: TODO (Rishikesh) — describe what you built here.
+tech: [Django, Python, REST APIs]
+order: 5
 draft: true
-# github: https://github.com/<user>/<repo>
+github: https://github.com/RishiAnand108/Edubook-Api
 # demo: https://
 ---
 

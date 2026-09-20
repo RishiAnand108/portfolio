@@ -38,6 +38,13 @@ for (const file of walk(DIST).filter((f) => f.endsWith('.html'))) {
   const html = readFileSync(file, 'utf8');
   const issues = [];
 
+  // Redirect stubs (the old section URLs) are generated meta-refresh pages with
+  // no content of their own — the accessibility and SEO checks below do not apply.
+  if (/http-equiv="refresh"/i.test(html)) {
+    console.log(`skip  ${file.split('\\').join('/')}  (redirect)`);
+    continue;
+  }
+
   const headings = [...html.matchAll(/<h([1-6])[\s>]/g)].map((m) => Number(m[1]));
   if (headings.filter((h) => h === 1).length !== 1) issues.push('expected exactly one <h1>');
   if (headings.some((h, i) => i > 0 && h - headings[i - 1] > 1))
