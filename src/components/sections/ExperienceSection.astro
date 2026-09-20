@@ -1,9 +1,19 @@
 ---
+/**
+ * Experience as expandable cards inside one bordered container.
+ *
+ * Each entry is a native <details>/<summary>, so it works without JavaScript,
+ * is keyboard accessible out of the box (Enter / Space on the header) and
+ * exposes its expanded state to assistive technology. The small script below
+ * only adds the smooth open/close animation. Several entries may be open at
+ * once; the first one starts open.
+ */
 import Section from './Section.astro';
 import Button from '@/components/ui/Button.astro';
 import Icon from '@/components/ui/Icon.astro';
 import TagList from '@/components/ui/TagList.astro';
 import { experience } from '@/config/experience';
+import { href } from '@/utils/url';
 import { isTodo, isShown } from '@/utils/links';
 
 const initials = (name: string) =>
@@ -12,91 +22,214 @@ const initials = (name: string) =>
     .slice(0, 2)
     .map((w) => w.charAt(0).toUpperCase())
     .join('');
+
+const dateRange = (start: string, end: string) => {
+  if (isTodo(start) && isTodo(end)) return null;
+  const s = isTodo(start) ? 'TODO' : start;
+  const e = isTodo(end) ? 'TODO' : end;
+  return `${s} – ${e}`;
+};
 ---
 
-<Section id="experience" title="Experience">
+<Section id="experience" title="Experiences">
   {experience.length === 0 ? (
     <p class="text-muted text-[14px]">Experience entries will be added soon.</p>
   ) : (
-    <ol class="divide-line-2 divide-y">
-      {experience.map((entry) => (
-        <li class="grid gap-x-4 gap-y-3 py-5 first:pt-0 last:pb-0 sm:grid-cols-[3rem_1fr]">
-          <div
-            aria-hidden="true"
-            class="border-line-2 bg-surface text-muted flex size-12 items-center justify-center rounded-lg border font-mono text-[13px] font-semibold"
-          >
-            {initials(entry.organization)}
-          </div>
-
-          <article class="min-w-0">
-            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-              <h3 class="text-ink text-[15px] font-bold tracking-tight">{entry.organization}</h3>
-              <p class="text-muted font-mono text-[11px]">
-                {isTodo(entry.dates) ? (
-                  <span class="text-faint" title="Dates not added yet">
-                    Dates: TODO
-                  </span>
-                ) : (
-                  entry.dates
-                )}
-              </p>
-            </div>
-            <p class="text-ink-2 mt-0.5 text-[13px] font-medium">{entry.role}</p>
-            <p class="text-muted mt-1 flex items-center gap-1.5 text-[12px]">
-              <Icon name="map-pin" size={12} class="text-faint" />
-              {isTodo(entry.arrangement) ? (
-                <span class="text-faint" title="Work arrangement not added yet">
-                  Arrangement: TODO
-                </span>
-              ) : (
-                entry.arrangement
-              )}
-            </p>
-
-            <ul class="text-ink-2 mt-3 space-y-1.5 text-[13.5px] leading-relaxed">
-              {entry.bullets.map((b) => (
-                <li class="flex gap-2.5">
-                  <span aria-hidden="true" class="text-faint">
-                    •
-                  </span>
-                  <span class="text-pretty">{b}</span>
-                </li>
-              ))}
-            </ul>
-
-            {entry.metrics && entry.metrics.length > 0 && (
-              <dl class="border-line-2 bg-surface mt-4 grid grid-cols-2 divide-x divide-line-2 rounded-lg border sm:grid-cols-4">
-                {entry.metrics.map((m) => (
-                  <div class="px-3 py-2">
-                    <dt class="text-faint text-[10px] font-semibold tracking-wider uppercase">
-                      {m.label}
-                    </dt>
-                    <dd class="text-ink mt-0.5 text-[14px] font-semibold">{m.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            )}
-
-            <TagList
-              items={entry.tech}
-              label={`Technologies used at ${entry.organization}`}
-              class="mt-4"
-            />
-
-            {isShown(entry.link) && (
-              <div class="mt-4">
-                <Button
-                  href={entry.link}
-                  icon="arrow-up-right"
-                  todoLabel="Company link not added yet"
+    <div class="border-line-2 bg-surface rounded-lg border">
+      {experience.map((entry, index) => {
+        const range = dateRange(entry.start, entry.end);
+        const panelId = `experience-${entry.id}`;
+        return (
+          <>
+            {index > 0 && <div aria-hidden="true" class="rule-x mx-4" />}
+            <details class="group" open={index === 0} data-experience>
+              <summary
+                class="grid cursor-pointer list-none grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-x-3 gap-y-0.5 px-4 py-4 select-none [&::-webkit-details-marker]:hidden"
+                aria-controls={panelId}
+              >
+                <span
+                  aria-hidden="true"
+                  class="border-line-2 bg-bg text-muted col-start-1 row-span-2 flex size-11 items-center justify-center overflow-hidden rounded-lg border font-mono text-[12px] font-semibold"
                 >
-                  Website
-                </Button>
+                  {entry.logo ? (
+                    <img
+                      src={href(entry.logo)}
+                      alt=""
+                      width="44"
+                      height="44"
+                      loading="lazy"
+                      class="size-full object-contain p-1.5"
+                    />
+                  ) : (
+                    initials(entry.organization)
+                  )}
+                </span>
+
+                <h3 class="text-ink col-start-2 row-start-1 min-w-0 text-[15px] leading-tight font-bold tracking-tight">
+                  {entry.organization}
+                </h3>
+                <span class="text-muted col-start-3 row-start-1 font-mono text-[11px] whitespace-nowrap">
+                  {range ?? (
+                    <span class="text-faint" title="Dates not added yet">
+                      Dates: TODO
+                    </span>
+                  )}
+                </span>
+                <span class="text-muted col-span-2 col-start-2 row-start-2 text-[13px]">
+                  <span class="text-ink-2 font-medium">{entry.role}</span>
+                  <span aria-hidden="true" class="text-faint mx-1.5">
+                    |
+                  </span>
+                  {isTodo(entry.location) ? (
+                    <span class="text-faint" title="Location not added yet">
+                      Location: TODO
+                    </span>
+                  ) : (
+                    entry.location
+                  )}
+                </span>
+
+                <span
+                  aria-hidden="true"
+                  class="text-faint group-hover:text-muted col-start-4 row-span-2 transition-transform duration-300 group-open:rotate-180"
+                >
+                  <Icon name="chevron-down" size={16} />
+                </span>
+              </summary>
+
+              <div
+                id={panelId}
+                class="grid grid-rows-[1fr] transition-[grid-template-rows] duration-300 ease-out data-[closed]:grid-rows-[0fr]"
+                data-panel
+              >
+                <div class="min-h-0 overflow-hidden">
+                  <div class="px-4 pt-1 pb-5 sm:pl-[4.5rem]">
+                    {entry.description && (
+                      <p class="text-ink-2 text-[13.5px] leading-relaxed text-pretty">
+                        {entry.description}
+                      </p>
+                    )}
+
+                    {entry.metrics && entry.metrics.length > 0 && (
+                      <dl class="border-line-2 bg-bg divide-line-2 mt-4 grid grid-cols-2 divide-x rounded-lg border sm:grid-cols-4">
+                        {entry.metrics.map((m) => (
+                          <div class="px-3 py-2">
+                            <dt class="text-faint text-[10px] font-semibold tracking-wider uppercase">
+                              {m.label}
+                            </dt>
+                            <dd class="text-ink mt-0.5 text-[14px] font-semibold">{m.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    )}
+
+                    {entry.responsibilities.length > 0 && (
+                      <>
+                        <p class="text-faint mt-4 mb-2 text-[10px] font-bold tracking-[0.2em] uppercase">
+                          Responsibilities
+                        </p>
+                        <ul class="text-ink-2 space-y-1.5 text-[13.5px] leading-relaxed">
+                          {entry.responsibilities.map((item) => (
+                            <li class="flex gap-2.5">
+                              <span aria-hidden="true" class="text-faint">
+                                •
+                              </span>
+                              <span class="text-pretty">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+
+                    <TagList
+                      items={entry.tech}
+                      label={`Technologies used at ${entry.organization}`}
+                      class="mt-4"
+                    />
+
+                    {isShown(entry.link) && (
+                      <div class="mt-4">
+                        <Button
+                          href={entry.link}
+                          icon="arrow-up-right"
+                          todoLabel="Company link not added yet"
+                        >
+                          Website
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            )}
-          </article>
-        </li>
-      ))}
-    </ol>
+            </details>
+          </>
+        );
+      })}
+    </div>
   )}
 </Section>
+
+<script>
+  // Smooth expand / collapse for the experience cards.
+  //
+  // The panel is a CSS grid whose single row animates between 1fr (open) and
+  // 0fr (the `data-closed` state, which only this script ever sets). So without
+  // JavaScript the native <details> toggle still works, just without the
+  // animation. Opening: set `open` on <details> while the panel is still
+  // collapsed, then on the next frame release it so the row grows. Closing:
+  // collapse the panel, let the row shrink, and only then remove `open`.
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLDetailsElement>('[data-experience]').forEach((details) => {
+    const summary = details.querySelector<HTMLElement>('summary');
+    const panel = details.querySelector<HTMLElement>('[data-panel]');
+    if (!summary || !panel) return;
+
+    if (!details.open) panel.dataset.closed = '';
+
+    const finishClose = () => {
+      // A quick re-open during the closing animation clears the flag; keep it open.
+      if ('closed' in panel.dataset) details.open = false;
+    };
+
+    summary.addEventListener('click', (event) => {
+      event.preventDefault();
+
+      // Branch on the panel flag, not `open`: while the close animation runs the
+      // element is still `open`, and a click then should re-open, not re-close.
+      if (!('closed' in panel.dataset)) {
+        panel.dataset.closed = '';
+        if (reduceMotion.matches) {
+          finishClose();
+          return;
+        }
+        let done = false;
+        const once = () => {
+          if (done) return;
+          done = true;
+          finishClose();
+        };
+        panel.addEventListener(
+          'transitionend',
+          (e) => {
+            if (e.target === panel) once();
+          },
+          { once: true },
+        );
+        // Safety net in case the transition never fires.
+        window.setTimeout(once, 400);
+      } else {
+        details.open = true;
+        if (reduceMotion.matches) {
+          delete panel.dataset.closed;
+          return;
+        }
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            delete panel.dataset.closed;
+          });
+        });
+      }
+    });
+  });
+</script>

@@ -141,9 +141,11 @@ that still need confirming.
 
 ### Experience — `src/config/experience.ts`
 
-One object per role: `organization`, `role`, `dates`, `arrangement`, `bullets`, `tech`,
-optional `metrics` (only verifiable numbers) and optional `link`. `dates` and `arrangement`
-are shown as `TODO` until you fill them in.
+One object per role, rendered as an expandable card (the first starts open): `organization`,
+`role`, `start`, `end` (a date or `'Present'`), `location`, optional `description`,
+`responsibilities`, `tech`, optional `metrics` (only verifiable numbers), optional `logo`
+(a path inside `public/`; initials are shown without one) and optional `link`. Dates and
+location are shown as `TODO` until you fill them in.
 
 ### Highlights — `src/config/achievements.ts`
 
