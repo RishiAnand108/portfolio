@@ -1,0 +1,36 @@
+---
+import Button from '@/components/ui/Button.astro';
+import SocialLinks from '@/components/ui/SocialLinks.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import { links } from '@/config/site';
+
+interface Props {
+  index?: string;
+}
+const { index } = Astro.props;
+---
+
+<section class="border-line border-t" aria-labelledby="cta-title">
+  <div class="container-page section">
+    <Eyebrow index={index}>Contact</Eyebrow>
+    <h2
+      id="cta-title"
+      class="font-display text-title mt-6 max-w-3xl tracking-[-0.012em] text-balance"
+    >
+      Let’s build something <em class="text-accent">useful</em>.
+    </h2>
+    <p class="text-muted text-lead mt-6 max-w-xl text-pretty">
+      Have a backend problem, an idea that needs an API, or an ML project that should leave the
+      notebook? I’d like to hear about it.
+    </p>
+
+    <div class="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8">
+      {links.email && (
+        <Button href={`mailto:${links.email}`} icon="arrow-up-right">
+          {links.email}
+        </Button>
+      )}
+      <SocialLinks include={['github', 'linkedin', 'resume']} />
+    </div>
+  </div>
+</section>

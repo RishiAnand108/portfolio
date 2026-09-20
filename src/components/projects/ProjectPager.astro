@@ -1,0 +1,57 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import type { Project } from '@/utils/content';
+import { href } from '@/utils/url';
+
+interface Props {
+  previous?: Project;
+  next?: Project;
+}
+
+const { previous, next } = Astro.props;
+---
+
+<nav aria-label="More projects" class="border-line border-t">
+  <div class="container-page grid gap-px sm:grid-cols-2">
+    {previous ? (
+      <a
+        href={href(`/projects/${previous.id}/`)}
+        class="group flex flex-col gap-2 py-10 sm:pr-8"
+        rel="prev"
+      >
+        <span class="text-muted flex items-center gap-2 font-mono text-xs">
+          <Icon
+            name="arrow-left"
+            size={14}
+            class="transition-transform duration-200 group-hover:-translate-x-0.5"
+          />
+          Previous project
+        </span>
+        <span class="font-display group-hover:text-accent text-2xl transition-colors sm:text-3xl">
+          {previous.data.title}
+        </span>
+      </a>
+    ) : (
+      <span class="hidden sm:block" />
+    )}
+    {next && (
+      <a
+        href={href(`/projects/${next.id}/`)}
+        class="group border-line flex flex-col gap-2 border-t py-10 sm:items-end sm:border-t-0 sm:border-l sm:pl-8 sm:text-right"
+        rel="next"
+      >
+        <span class="text-muted flex items-center gap-2 font-mono text-xs">
+          Next project
+          <Icon
+            name="arrow-right"
+            size={14}
+            class="transition-transform duration-200 group-hover:translate-x-0.5"
+          />
+        </span>
+        <span class="font-display group-hover:text-accent text-2xl transition-colors sm:text-3xl">
+          {next.data.title}
+        </span>
+      </a>
+    )}
+  </div>
+</nav>

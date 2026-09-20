@@ -1,0 +1,26 @@
+---
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import { currentFocus } from '@/config/site';
+---
+
+<section class="border-line border-t" aria-labelledby="focus-title">
+  <div class="container-page section grid gap-10 lg:grid-cols-12">
+    <div class="lg:col-span-4">
+      <SectionHeading
+        id="focus-title"
+        index="01"
+        eyebrow="Currently building"
+        title="Where my time goes right now."
+      />
+    </div>
+
+    <dl class="divide-line border-line divide-y border-y lg:col-span-8">
+      {currentFocus.map((item) => (
+        <div class="grid gap-1 py-5 sm:grid-cols-[13rem_1fr] sm:gap-6 sm:py-6">
+          <dt class="font-medium">{item.area}</dt>
+          <dd class="text-muted text-pretty">{item.detail}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

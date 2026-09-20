@@ -1,0 +1,132 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import ThemeToggle from '@/components/ui/ThemeToggle.astro';
+import SocialLinks from '@/components/ui/SocialLinks.astro';
+import { nav, site } from '@/config/site';
+import { href, isActive } from '@/utils/url';
+
+const { pathname } = Astro.url;
+---
+
+<header
+  class="border-line/70 bg-bg/90 sticky top-0 z-40 border-b backdrop-blur-sm"
+  data-site-header
+>
+  <div class="container-page flex h-16 items-center justify-between gap-4">
+    <a
+      href={href('/')}
+      class="hover:text-accent font-mono text-sm font-medium tracking-[0.22em] uppercase transition-colors"
+      aria-label={`${site.name} — home`}
+    >
+      {site.name}
+    </a>
+
+    <div class="flex items-center gap-1">
+      <nav aria-label="Main" class="mr-3 hidden md:block">
+        <ul class="flex items-center gap-1">
+          {nav.map((item) => {
+            const active = isActive(pathname, item.path);
+            return (
+              <li>
+                <a
+                  href={href(item.path)}
+                  aria-current={active ? 'page' : undefined}
+                  class:list={[
+                    'relative inline-flex min-h-11 items-center px-3 text-[0.9375rem] transition-colors',
+                    active ? 'text-ink font-medium' : 'text-muted hover:text-ink',
+                  ]}
+                >
+                  {item.label}
+                  {active && (
+                    <span aria-hidden="true" class="bg-accent absolute inset-x-3 bottom-1.5 h-px" />
+                  )}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      <SocialLinks variant="icons" include={['github', 'linkedin']} class="hidden md:flex" />
+      <ThemeToggle />
+
+      <button
+        type="button"
+        class="text-ink -mr-2 inline-flex size-11 items-center justify-center rounded-full md:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Open menu"
+        data-menu-button
+      >
+        <span data-menu-icon="open">
+          <Icon name="menu" size={22} />
+        </span>
+        <span data-menu-icon="close" hidden>
+          <Icon name="x" size={22} />
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="border-line bg-bg border-t md:hidden" hidden data-menu-panel>
+    <nav aria-label="Mobile" class="container-page py-4">
+      <ul class="divide-line divide-y">
+        {nav.map((item) => {
+          const active = isActive(pathname, item.path);
+          return (
+            <li>
+              <a
+                href={href(item.path)}
+                aria-current={active ? 'page' : undefined}
+                class:list={[
+                  'font-display flex min-h-14 items-center justify-between text-2xl',
+                  active ? 'text-accent' : 'text-ink',
+                ]}
+              >
+                {item.label}
+                {active && <span class="text-muted font-mono text-xs">current</span>}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+      <SocialLinks class="mt-5" />
+    </nav>
+  </div>
+</header>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-menu-button]');
+  const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+
+  if (button && panel) {
+    const openIcon = button.querySelector<HTMLElement>('[data-menu-icon="open"]');
+    const closeIcon = button.querySelector<HTMLElement>('[data-menu-icon="close"]');
+
+    const setOpen = (open: boolean) => {
+      button.setAttribute('aria-expanded', String(open));
+      button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      panel.hidden = !open;
+      if (openIcon) openIcon.hidden = open;
+      if (closeIcon) closeIcon.hidden = !open;
+    };
+
+    button.addEventListener('click', () => {
+      setOpen(button.getAttribute('aria-expanded') !== 'true');
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        button.focus();
+      }
+    });
+
+    panel.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+
+    // Close the menu if the viewport grows past the mobile breakpoint.
+    window.matchMedia('(min-width: 768px)').addEventListener('change', (e) => {
+      if (e.matches) setOpen(false);
+    });
+  }
+</script>

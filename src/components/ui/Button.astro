@@ -1,0 +1,39 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+import { href as withBase, isExternal } from '@/utils/url';
+
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary';
+  icon?: IconName;
+  class?: string;
+}
+
+const { href, variant = 'primary', icon, class: className } = Astro.props;
+const external = isExternal(href);
+
+const variants = {
+  primary: 'bg-ink text-bg hover:bg-accent hover:text-accent-contrast border-transparent',
+  secondary: 'border-line text-ink hover:border-ink',
+};
+---
+
+<a
+  href={withBase(href)}
+  class:list={[
+    'group inline-flex min-h-12 items-center justify-center gap-2 rounded-full border px-6 text-[0.9375rem] font-medium transition-colors duration-200',
+    variants[variant],
+    className,
+  ]}
+  {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+>
+  <slot />
+  {icon && (
+    <Icon
+      name={icon}
+      size={16}
+      class="transition-transform duration-200 group-hover:translate-x-0.5"
+    />
+  )}
+  {external && <span class="sr-only">(opens in a new tab)</span>}
+</a>
