@@ -4,23 +4,22 @@ import Button from '@/components/ui/Button.astro';
 ---
 
 <BaseLayout title="Page not found" description="The page you requested does not exist." noindex>
-  <section class="container-page flex min-h-[65vh] flex-col justify-center py-20">
-    <p class="text-muted font-mono text-sm">
-      <span class="text-accent">404</span> — Not Found
+  <section class="col flex min-h-[60vh] flex-col justify-center pt-24 pb-16">
+    <header>
+      <p class="text-faint font-mono text-[11px] tracking-[0.2em] uppercase">404 — Not found</p>
+      <h1 class="text-ink mt-4 text-[24px] font-bold tracking-tight">
+        This route doesn’t return anything.
+      </h1>
+    </header>
+    <p class="text-muted mt-3 max-w-md text-[14px] leading-relaxed">
+      The page may have moved, or the link might be wrong. Everything on the site now lives on the
+      home page.
     </p>
-    <h1 class="font-display text-title mt-6 max-w-2xl tracking-[-0.012em] text-balance">
-      This route doesn’t return anything.
-    </h1>
-    <p class="text-muted text-lead mt-6 max-w-xl">
-      The page may have moved, or the link might be wrong. The rest of the site is still up.
-    </p>
-    <div class="mt-10 flex flex-col gap-3 min-[420px]:flex-row">
-      <Button href="/" icon="arrow-right">
+    <nav aria-label="Where to go next" class="mt-6 flex flex-wrap gap-2">
+      <Button href="/" variant="primary" icon="arrow-right">
         Back to home
       </Button>
-      <Button href="/#projects" variant="secondary">
-        Browse projects
-      </Button>
-    </div>
+      <Button href="/#projects">Browse projects</Button>
+    </nav>
   </section>
 </BaseLayout>

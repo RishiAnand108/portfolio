@@ -1,39 +1,70 @@
 ---
+/**
+ * Pill button / link.
+ *
+ * `href` may be a URL, an internal path, or the 'TODO' placeholder.
+ * A TODO renders as a visibly disabled, non-focusable element so the
+ * placeholder is obvious but never clickable.
+ */
 import Icon, { type IconName } from './Icon.astro';
 import { href as withBase, isExternal } from '@/utils/url';
+import { isTodo } from '@/utils/links';
 
 interface Props {
   href: string;
   variant?: 'primary' | 'secondary';
+  size?: 'sm' | 'md';
   icon?: IconName;
+  /** Accessible label used when the button is a TODO placeholder. */
+  todoLabel?: string;
   class?: string;
 }
 
-const { href, variant = 'primary', icon, class: className } = Astro.props;
-const external = isExternal(href);
+const {
+  href,
+  variant = 'secondary',
+  size = 'sm',
+  icon,
+  todoLabel = 'Link not added yet',
+  class: className,
+} = Astro.props;
 
-const variants = {
-  primary: 'bg-ink text-bg hover:bg-accent hover:text-accent-contrast border-transparent',
-  secondary: 'border-line text-ink hover:border-ink',
+const todo = isTodo(href);
+const external = !todo && isExternal(href);
+
+const base =
+  'group inline-flex items-center justify-center gap-1.5 rounded-full border font-medium whitespace-nowrap transition-colors duration-200';
+const sizes = {
+  sm: 'min-h-8 px-3 py-1.5 text-[12px]',
+  md: 'min-h-10 px-4 py-2 text-[13px]',
 };
+const variants = {
+  primary: 'bg-ink text-bg border-transparent hover:bg-ink-2',
+  secondary: 'bg-surface text-ink-2 border-line-2 hover:bg-surface-2 hover:text-ink',
+};
+const disabled = 'bg-transparent text-faint border-line-2 border-dashed cursor-not-allowed';
 ---
 
-<a
-  href={withBase(href)}
-  class:list={[
-    'group inline-flex min-h-12 items-center justify-center gap-2 rounded-full border px-6 text-[0.9375rem] font-medium transition-colors duration-200',
-    variants[variant],
-    className,
-  ]}
-  {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
->
-  <slot />
-  {icon && (
-    <Icon
-      name={icon}
-      size={16}
-      class="transition-transform duration-200 group-hover:translate-x-0.5"
-    />
-  )}
-  {external && <span class="sr-only">(opens in a new tab)</span>}
-</a>
+{todo ? (
+  <span
+    class:list={[base, sizes[size], disabled, className]}
+    aria-disabled="true"
+    title={todoLabel}
+    data-todo
+  >
+    {icon && <Icon name={icon} size={14} class="opacity-60" />}
+    <slot />
+    <span class="font-mono text-[10px] tracking-wider uppercase opacity-70">· TODO</span>
+    <span class="sr-only">({todoLabel})</span>
+  </span>
+) : (
+  <a
+    href={withBase(href)}
+    class:list={[base, sizes[size], variants[variant], className]}
+    {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+  >
+    {icon && <Icon name={icon} size={14} class="opacity-70 group-hover:opacity-100" />}
+    <slot />
+    {external && <span class="sr-only">(opens in a new tab)</span>}
+  </a>
+)}

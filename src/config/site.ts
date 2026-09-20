@@ -1,103 +1,75 @@
 /**
- * Single source of truth for personal details, links and page copy.
+ * Single source of truth for personal details, links, navigation and hero copy.
  * Edit this file to update the site — no component changes required.
  *
- * Links left as an empty string are hidden everywhere on the site,
- * so nothing unverified or broken is ever rendered.
+ * Link values:
+ *   - a URL            → rendered as a normal link
+ *   - the string 'TODO' → rendered as a visible, disabled placeholder
+ *   - an empty string   → hidden everywhere
  */
+
+export const TODO = 'TODO';
 
 export interface NavItem {
   label: string;
-  /** Anchor on the single page, or a real path. */
+  /** Anchor on the single page. */
   path: string;
-  /** Section id used by the scroll-spy. Omit for plain links. */
-  section?: string;
-}
-
-export interface FocusItem {
-  area: string;
-  detail: string;
+  /** Section id used by the scroll-spy. Must match the section's `id`. */
+  section: string;
 }
 
 export const site = {
   name: 'Rishikesh',
-  /** Full name, used where the longer form reads better (e.g. the footer). */
+  /** Short name used in the hero heading. */
+  shortName: 'Rishi',
+  /** Full name, used in the footer and metadata. */
   fullName: 'Rishikesh Prasad',
-  title: 'Rishikesh — Backend Engineer · AI/ML Developer',
-  role: 'Backend Engineer · AI/ML Developer',
+  title: 'Rishikesh — Backend Engineer | AI/ML Builder',
+  role: 'Backend Engineer | AI/ML Builder',
   description:
-    'Rishikesh is a backend engineer and AI/ML developer working with Python, FastAPI, Django, PostgreSQL and machine learning to build reliable APIs, data pipelines and automation.',
+    'Rishikesh is a backend engineer and AI/ML builder working with Python, FastAPI, Django, PostgreSQL and machine learning to build reliable APIs, data pipelines and automation.',
   locale: 'en',
+
+  /**
+   * Profile photo shown in the hero, as a path inside /public (e.g. '/avatar.png').
+   * TODO (Rishikesh): add a photo to /public and set this. Until then a monogram is shown.
+   */
+  avatar: '',
 
   /** Shown in the hero. Set `show: false` to hide it. */
   availability: {
     show: true,
-    label: 'Open to backend & AI/ML opportunities',
+    label: 'Open to backend & AI/ML roles',
   },
-
-  /**
-   * When true, content marked `draft: true` (unverified experience entries,
-   * in-progress case studies) is shown with a visible "Draft" label.
-   * Set to false to hide all draft content from the built site.
-   */
-  showDraftContent: true,
 } as const;
 
 export const links = {
   email: 'risanand108@gmail.com',
   github: 'https://github.com/RishiAnand108',
   // TODO (Rishikesh): add your LinkedIn profile URL, e.g. https://www.linkedin.com/in/your-handle
-  linkedin: '',
+  linkedin: TODO,
   // TODO (Rishikesh): put resume.pdf in /public and set this to '/resume.pdf' (or any external URL).
-  resume: '',
+  resume: TODO,
 } as const;
 
-/** Single-page anchors. `section` must match the id rendered by each section component. */
-export const nav: NavItem[] = [
-  { label: 'Home', path: '/#home', section: 'home' },
-  { label: 'About', path: '/#about', section: 'about' },
+/**
+ * Desktop side index — the site's only navigation. Every entry is a section
+ * on the home page, in page order.
+ */
+export const sideIndex: NavItem[] = [
   { label: 'Experience', path: '/#experience', section: 'experience' },
   { label: 'Projects', path: '/#projects', section: 'projects' },
   { label: 'Skills', path: '/#skills', section: 'skills' },
-  { label: 'Achievements', path: '/#achievements', section: 'achievements' },
+  { label: 'Highlights', path: '/#highlights', section: 'highlights' },
   { label: 'Contact', path: '/#contact', section: 'contact' },
 ];
 
 export const hero = {
-  headline: 'Building reliable backend systems and practical AI solutions.',
-  supporting:
-    'I’m a backend engineer and AI/ML developer working with Python, FastAPI, Django and PostgreSQL. I build APIs, data pipelines and automation, and I use machine learning where it genuinely solves the problem.',
+  tagline: 'Backend engineer. I build the APIs, data and automation that products run on.',
+  bullets: [
+    'Currently at a market research startup: backend services, data pipelines, automation and AI integrations.',
+    'Python, FastAPI, Django and PostgreSQL are my daily tools; Docker and Git package and ship the result.',
+    'I bring AI/ML into products where it solves a real problem — models behind APIs, not notebooks.',
+    'B.Tech in Artificial Intelligence and Data Science, with an eye on scalable systems and audio AI.',
+  ],
 };
-
-/**
- * The small "API response" card in the hero. Keys and values are rendered as JSON,
- * so keep them short and factual.
- */
-export const profile: Record<string, string | string[]> = {
-  role: 'Backend Engineer',
-  also: 'AI/ML Developer',
-  education: 'B.Tech, AI & Data Science',
-  stack: ['Python', 'FastAPI', 'Django', 'PostgreSQL', 'Docker'],
-  interests: ['APIs', 'automation', 'scalable systems', 'audio AI'],
-};
-
-/** "Currently focused on" list, shown inside the About section. */
-export const currentFocus: FocusItem[] = [
-  {
-    area: 'Backend engineering',
-    detail: 'Designing APIs, data models and services with FastAPI, Django and PostgreSQL.',
-  },
-  {
-    area: 'AI / ML',
-    detail:
-      'Supervised learning with scikit-learn and XGBoost, plus LLM integrations inside real products.',
-  },
-  {
-    area: 'Automation',
-    detail: 'Replacing repetitive manual work with scripts, scheduled jobs and internal tooling.',
-  },
-  {
-    area: 'Learning',
-    detail: 'Going deeper on system design, scalable architecture and deploying models reliably.',
-  },
-];

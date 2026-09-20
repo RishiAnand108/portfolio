@@ -1,18 +1,21 @@
 ---
-import Eyebrow from './Eyebrow.astro';
-
+/**
+ * Small bold section title with a full-bleed dotted rule beneath it and
+ * nodes where the rule meets the column edges.
+ */
 interface Props {
-  eyebrow: string;
-  index?: string;
+  id: string;
   title: string;
-  id?: string;
 }
-const { eyebrow, index, title, id } = Astro.props;
+const { id, title } = Astro.props;
 ---
 
-<div>
-  <Eyebrow index={index}>{eyebrow}</Eyebrow>
-  <h2 id={id} class="font-display text-heading mt-5 max-w-2xl tracking-[-0.012em] text-balance">
+<div class="relative flex items-center justify-between gap-4 py-2">
+  <h2 id={id} class="text-ink text-[18px] font-bold tracking-tight">
     {title}
   </h2>
+  <slot name="action" />
+  <div aria-hidden="true" class="rule-x rule-bleed bottom-0"></div>
+  <span aria-hidden="true" class="node bottom-0 -left-4 -translate-x-1/2 translate-y-1/2"></span>
+  <span aria-hidden="true" class="node -right-4 bottom-0 translate-x-1/2 translate-y-1/2"></span>
 </div>

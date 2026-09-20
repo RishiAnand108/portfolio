@@ -1,31 +1,40 @@
 ---
 /**
- * Shared shell for every section on the single page: an anchor target, a
- * two-column grid with the heading on the left, and a divider above.
- * Keeping it here means the seven sections stay visually identical.
+ * Shared shell for every homepage section: an anchor target, a full-bleed
+ * dotted rule on top, the small bold heading with a rule beneath it, and the
+ * content. Keeping it here means every section looks identical.
  */
 import SectionHeading from '@/components/ui/SectionHeading.astro';
 
 interface Props {
   /** Anchor id — must match the `section` value in the nav config. */
   id: string;
-  index: string;
-  eyebrow: string;
   title: string;
+  /** Optional one-liner shown under the heading, above the content. */
+  intro?: string;
+  class?: string;
 }
 
-const { id, index, eyebrow, title } = Astro.props;
+const { id, title, intro, class: className } = Astro.props;
 ---
 
-<section id={id} class="border-line border-t" aria-labelledby={`${id}-title`} data-section>
-  <div class="container-page section grid gap-10 lg:grid-cols-12">
-    <div class="lg:col-span-4 lg:sticky lg:top-28 lg:self-start">
-      <SectionHeading id={`${id}-title`} index={index} eyebrow={eyebrow} title={title} />
-      <slot name="aside" />
-    </div>
+<section
+  id={id}
+  class:list={['relative mt-6 scroll-mt-6', className]}
+  aria-labelledby={`${id}-title`}
+  data-section
+>
+  <div aria-hidden="true" class="rule-x rule-bleed top-0"></div>
+  <span aria-hidden="true" class="node top-0 -left-4 -translate-x-1/2 -translate-y-1/2"></span>
+  <span aria-hidden="true" class="node top-0 -right-4 translate-x-1/2 -translate-y-1/2"></span>
 
-    <div class="lg:col-span-8">
-      <slot />
-    </div>
+  <SectionHeading id={`${id}-title`} title={title}>
+    <slot name="action" slot="action" />
+  </SectionHeading>
+
+  {intro && <p class="text-muted mt-4 text-[13.5px] leading-relaxed text-pretty">{intro}</p>}
+
+  <div class="pt-5 pb-6">
+    <slot />
   </div>
 </section>

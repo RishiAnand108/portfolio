@@ -1,0 +1,25 @@
+---
+import Section from './Section.astro';
+import { aboutParagraphs } from '@/config/about';
+import { currentFocus } from '@/config/site';
+---
+
+<Section id="about" title="About">
+  <div class="text-ink-2 space-y-3 text-[14px] leading-relaxed sm:text-[15px]">
+    {aboutParagraphs.map((p) => (
+      <p class="text-pretty">{p}</p>
+    ))}
+  </div>
+
+  <div class="mt-6">
+    <h3 class="text-faint mb-2 text-[10px] font-bold tracking-[0.2em] uppercase">Currently</h3>
+    <dl class="border-line-2 bg-surface divide-line-2 divide-y rounded-lg border">
+      {currentFocus.map((item) => (
+        <div class="grid gap-0.5 px-4 py-2.5 text-[13px] sm:grid-cols-[7.5rem_1fr] sm:gap-4">
+          <dt class="text-muted font-medium">{item.area}</dt>
+          <dd class="text-ink-2 text-pretty">{item.detail}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</Section>

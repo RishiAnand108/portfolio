@@ -1,27 +1,29 @@
 # Rishikesh — Portfolio
 
-Personal portfolio of **Rishikesh Prasad**, Backend Engineer · AI/ML Developer.
+Personal portfolio of **Rishikesh Prasad**, Backend Engineer | AI/ML Builder.
+Live at <https://rishixcodes.me>.
 
-A fast, static, content-driven site. Everything lives on a single page with seven anchored
-sections — Home, About, Experience, Projects, Skills, Achievements, Contact — and each project
-keeps a separate case study page for technical depth.
+A fast, static, single-page site. Everything lives on the home page in one narrow centred
+column: Hero, Experience, Projects, Skills & Technologies, Highlights and Contact. The only
+navigation is the desktop side index; on mobile the column fills the screen and sections are
+reached by scrolling. Projects are simple cards — there are no case-study pages.
 
-The old section URLs (`/about`, `/experience`, `/projects`, `/contact`) redirect to their
-anchors, so existing links keep working.
+Old URLs (`/about`, `/experience`, `/projects`, `/projects/<slug>`, `/skills`, `/achievements`,
+`/contact`) redirect to the home page or the matching section, so existing links keep working.
 
 ## Tech stack
 
 | Area      | Choice                                                                       |
 | --------- | ---------------------------------------------------------------------------- |
-| Framework | [Astro](https://astro.build) (static output, zero JS framework)              |
+| Framework | [Astro](https://astro.build) (static output, no JS framework)                |
 | Language  | TypeScript (strict)                                                          |
 | Styling   | Tailwind CSS v4 + a small token layer in `src/styles/global.css`             |
-| Content   | Astro Content Collections (Markdown) for projects and experience             |
-| Fonts     | Instrument Serif (display), Geist (body), Geist Mono — self-hosted, no CDN   |
+| Content   | Plain typed data files in `src/config/`                                      |
+| Fonts     | Geist and Geist Mono — self-hosted, no CDN                                   |
 | Icons     | Inline SVG (Lucide paths) via `src/components/ui/Icon.astro`                 |
 | SEO       | Canonical URLs, Open Graph/Twitter tags, sitemap, `robots.txt`, social image |
 | Tooling   | ESLint, Prettier, `astro check`, a post-build HTML audit                     |
-| Client JS | Three tiny inline scripts: theme toggle, mobile menu, project filter         |
+| Client JS | Two small scripts: theme toggle and side-index scroll-spy                    |
 
 No analytics, no trackers, no backend.
 
@@ -54,105 +56,102 @@ The site runs at <http://localhost:4321>.
 ## Project structure
 
 ```text
-├── .github/workflows/deploy.yml                GitHub Pages deployment
-├── astro.config.mjs                            site URL, redirects, integrations
-├── netlify.toml                                Netlify build settings
-├── public/                                     favicon, social image, CNAME, .nojekyll
-│                                               (add resume.pdf here)
+├── .github/workflows/deploy.yml     GitHub Pages deployment
+├── astro.config.mjs                 site URL, redirects, integrations
+├── archive/                         retired content and components, not built (safe to delete)
+├── public/                          favicon, social image, CNAME, .nojekyll
+│                                    (add avatar.png and resume.pdf here)
 ├── scripts/
-│   ├── generate-og.mjs                         builds og.png + PNG favicons
-│   └── audit-dist.mjs                          post-build HTML audit
+│   ├── generate-og.mjs              builds og.png + PNG favicons
+│   └── audit-dist.mjs               post-build HTML audit
 └── src/
-    ├── config/
-    │   ├── site.ts                             ★ name, links, nav anchors, hero copy
-    │   ├── about.ts                            ★ About section copy
-    │   ├── skills.ts                           ★ skill groups
-    │   ├── achievements.ts                     ★ achievements and community work
-    │   └── categories.ts                       project categories
-    ├── content/
-    │   ├── projects/                           ★ one Markdown file per project
-    │   └── experience/                         ★ one Markdown file per timeline entry
-    ├── content.config.ts                       content schemas (typed frontmatter)
+    ├── config/                      ★ everything you edit
+    │   ├── site.ts                  name, role, links, side index, hero copy
+    │   ├── experience.ts            experience entries
+    │   ├── projects.ts              project cards
+    │   ├── skills.ts                skill groups
+    │   ├── achievements.ts          highlights
+    │   └── categories.ts            project categories
     ├── components/
-    │   ├── layout/                             Navbar, Footer, Seo
-    │   ├── ui/                                 Button, Tag, Icon, ThemeToggle, SocialLinks, …
-    │   ├── projects/                           ProjectCard, ProjectPager
-    │   └── sections/                           Section (shared shell), Hero, AboutSection,
-    │                                           ExperienceSection, ProjectsSection,
-    │                                           SkillsSection, AchievementsSection,
-    │                                           ContactSection, Timeline, ProfileCard
-    ├── layouts/                                BaseLayout, ProjectLayout (case study template)
-    ├── pages/                                  / (the whole site), /projects/[slug],
-    │                                           404, robots.txt
-    ├── styles/global.css                       design tokens, type scale, prose styles
-    └── utils/                                  URL helpers (base-path aware), content queries
+    │   ├── layout/                  SideIndex (desktop index + scroll-spy), Footer, Seo
+    │   ├── ui/                      Button, Tag, TagList, Icon, ThemeToggle, SectionHeading
+    │   ├── projects/ProjectCard     one project card
+    │   └── sections/                Section (shared shell), Hero, Experience, Projects,
+    │                                Skills, Highlights, Contact
+    ├── layouts/BaseLayout.astro     page shell: fonts, theme script, column edge lines
+    ├── pages/                       index (the whole site), 404, robots.txt
+    ├── styles/global.css            design tokens, dotted rules, column width
+    └── utils/                       URL helpers (base-path aware), TODO-link helpers
 ```
 
-Files marked ★ are the ones you edit to change content. Presentation lives elsewhere.
+## Updating content
 
-## Updating personal details
+Everything personal is in **`src/config/`**. Presentation lives in components; you should not
+need to touch them.
 
-Everything personal is in **`src/config/site.ts`**:
+### Links and the `TODO` placeholder
 
-- `links.email` — your contact address.
-- `links.github` — set from the local git user name; change if needed.
-- `links.linkedin` — empty. Add your profile URL.
-- `links.resume` — empty. Put `resume.pdf` in `public/` and set this to `/resume.pdf`.
+Any link field accepts three kinds of value:
+
+| Value       | Rendered as                                        |
+| ----------- | -------------------------------------------------- |
+| a URL       | a normal link                                      |
+| `'TODO'`    | a visible, disabled, non-clickable placeholder     |
+| `''`/absent | nothing (the button or row is not rendered at all) |
+
+So to add a link later, replace the word `TODO` with the URL. Nothing else changes.
+
+### Personal details — `src/config/site.ts`
+
+- `links.email`, `links.github` — set.
+- `links.linkedin` — `TODO`. Add your profile URL.
+- `links.resume` — `TODO`. Put `resume.pdf` in `public/` and set this to `'/resume.pdf'`.
+- `site.avatar` — empty. Put a photo in `public/` and set this to `'/avatar.png'`.
 - `site.availability` — the status line in the hero (`show: false` hides it).
-- `hero`, `profile`, `currentFocus`, `aboutPreview` — homepage copy.
+- `hero.tagline`, `hero.bullets` — home page copy. Background, current work and interests
+  live here; there is no separate About section.
+- `sideIndex` — the desktop index. `section` must match a section id.
 
-**Any link left as an empty string is hidden everywhere** (navbar, hero, footer, contact page),
-so the site never renders a broken link.
+### Projects — `src/config/projects.ts`
 
-About page copy is in `src/config/about.ts`.
+One object per card:
+
+```ts
+{
+  id: 'my-project',
+  title: 'My Project',
+  description: 'One or two lines. That is the whole description — there are no project pages.',
+  category: 'backend',            // backend | ai-ml | research | tools (see categories.ts)
+  tech: ['Python', 'FastAPI'],
+  status: 'live',                 // optional: live | building | planned
+  github: 'https://github.com/you/my-project',   // or 'TODO', or omit
+  demo: 'TODO',                   // or a URL, or omit if there will never be a live demo
+}
+```
+
+Cards appear in array order. Each file has `TODO (Rishikesh)` comments next to the values
+that still need confirming.
+
+### Experience — `src/config/experience.ts`
+
+One object per role: `organization`, `role`, `dates`, `arrangement`, `bullets`, `tech`,
+optional `metrics` (only verifiable numbers) and optional `link`. `dates` and `arrangement`
+are shown as `TODO` until you fill them in.
+
+### Highlights — `src/config/achievements.ts`
+
+`badge` (short label), `title`, `detail`, optional `period` and `link`.
+
+### Skills — `src/config/skills.ts`
+
+Groups of plain strings. No ratings, no percentages.
+
+### GitHub
+
+There is no GitHub section. The profile is linked from the hero socials, the Contact list,
+the "All repositories" button on the Projects heading and each project card.
 
 After changing your name or role, run `npm run og` to regenerate the social preview image.
-
-## Adding a project
-
-1. Copy `src/content/projects/_template.md` to `src/content/projects/my-project.md`.
-   The file name becomes the URL: `/projects/my-project/`.
-2. Fill in the frontmatter:
-
-   ```yaml
-   title: My Project
-   category: backend # backend | ai-ml | research | tools
-   summary: One sentence shown on the Projects page and in search results.
-   tech: [Python, FastAPI, PostgreSQL]
-   order: 5 # lower numbers are listed first
-   draft: false # true shows a "work in progress" note on the case study
-   github: https://github.com/you/my-project # optional
-   demo: https://my-project.example.com # optional
-   cover: ./images/my-project.png # optional, optimised automatically
-   coverAlt: Describe the image
-   ```
-
-3. Write the case study in Markdown below the frontmatter. Every `##` heading automatically
-   appears in the "On this page" sidebar. The template lists the recommended sections for
-   backend and AI/ML projects.
-
-The project then appears in the Projects section under its category heading, and in the
-previous/next navigation on case studies — no UI changes needed. To add a new category, edit
-`src/config/categories.ts`.
-
-Three optional frontmatter fields drive the extra detail on each card: `problem`, `features`
-(a list) and `contribution`. Leave one out and that block is simply not rendered.
-
-### Draft content
-
-The four initial case studies and the experience entries are marked `draft: true` because
-their details have not been verified. Drafts are shown with a visible "Draft" label rather than
-being presented as finished fact. Each file contains a `TODO` comment listing what to fill in.
-
-- Set `draft: false` in a file once its content is complete and accurate.
-- Or set `showDraftContent: false` in `src/config/site.ts` to hide draft experience entries
-  from the built site entirely.
-
-## Adding an experience entry
-
-Copy `src/content/experience/_template.md`, rename it without the underscore, and fill in
-`role`, `organization`, `date`, `responsibilities`, `technologies` and `links`.
-Use `order` to control position (lowest first).
 
 ## Site URL and base path
 
@@ -164,11 +163,9 @@ base: '/',
 ```
 
 They are **not** read from environment variables. Injecting a `BASE_PATH` from CI was what
-previously produced `/portfolio/_astro/…` asset URLs and 404s on the custom domain — change
-them here instead. There are no secrets and no required environment variables.
-
-All internal links go through `href()` in `src/utils/url.ts`, so changing `base` is enough to
-move the site to a sub-path.
+previously produced `/portfolio/_astro/…` asset URLs and CSS 404s on the custom domain — change
+them here instead. All internal links go through `href()` in `src/utils/url.ts`, so changing
+`base` is enough to move the site to a sub-path.
 
 ## Deployment
 
@@ -177,36 +174,26 @@ The build output is plain static files in `dist/`.
 ### GitHub Pages (current setup)
 
 1. _Settings → Pages_ → **Source: GitHub Actions**.
-2. `.github/workflows/deploy.yml` builds and deploys on every push to `main`. It is the only
-   deployment workflow — a second, competing one was removed because two workflows publishing
-   to Pages on the same push race each other.
+2. `.github/workflows/deploy.yml` builds and deploys on every push to `main` (Node 22, `npm ci`,
+   `npm run build`, `upload-pages-artifact`, `deploy-pages`). It is the only deployment
+   workflow.
 3. `public/CNAME` (`rishixcodes.me`) and `public/.nojekyll` are copied into `dist/` by the
    build, so the artifact carries its own domain and keeps Jekyll from stripping `_astro/`.
-   Keep them in `public/` — at the repository root they never reach the deployed output.
+   Keep them in `public/`.
 
-### Vercel
+Before pushing, run `npm run verify`.
 
-Import the repository — Vercel detects Astro automatically (build `npm run build`, output
-`dist`). Update `site` in `astro.config.mjs` if the origin changes.
+### Netlify / Vercel
 
-### Netlify
-
-Import the repository. `netlify.toml` already sets the build command and publish directory.
-
-## Contact form
-
-V1 deliberately uses email and profile links rather than a form, so nothing can silently fail.
-To add a form later, use a hosted provider (Formspree, Netlify Forms, Web3Forms): post to the
-provider's endpoint, keep any keys out of the repository, add a honeypot field, and only show a
-success message after the provider confirms delivery.
+Both detect Astro automatically (build `npm run build`, output `dist`). `netlify.toml` is
+already present.
 
 ## Accessibility and performance notes
 
 - Semantic landmarks, one `<h1>` per page, skip link, visible focus states
-- Colour contrast of all text/background token pairs is at least 5.1:1 (WCAG AA)
-- Mobile menu is a disclosure with `aria-expanded`, closes on `Escape` and returns focus
-- The nav scroll-spy sets `aria-current="location"` on the section in view; without
-  JavaScript every anchor link still works and nothing is hidden
+- Placeholder links are `aria-disabled` spans, never anchors, so nothing dead is clickable
+- The side-index scroll-spy sets `aria-current="location"` on the section in view; without
+  JavaScript every anchor link still works
 - `prefers-reduced-motion` disables all animation
 - Theme follows the system preference until the visitor chooses one (stored in `localStorage`)
 - Fonts are self-hosted; pages ship no framework JavaScript

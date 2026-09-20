@@ -1,0 +1,77 @@
+---
+/**
+ * Fixed "Index" list beside the column on desktop — the site's only
+ * navigation. Every entry is an anchor on the home page; a scroll-spy marks
+ * the section currently in view with `aria-current`. Hidden below 1024px,
+ * where the column fills the screen and sections are reached by scrolling.
+ */
+import { sideIndex } from '@/config/site';
+import { href } from '@/utils/url';
+---
+
+<nav
+  aria-label="Page index"
+  class="fixed top-52 z-30 hidden lg:block"
+  style="left: calc(50% + var(--col) / 2 + 2.5rem)"
+>
+  <p class="text-faint mb-3 text-[10px] font-bold tracking-[0.2em] uppercase">Index</p>
+  <ul class="flex flex-col gap-3">
+    {sideIndex.map((item) => (
+      <li>
+        <a
+          href={href(item.path)}
+          data-nav-link
+          data-section-link={item.section}
+          class="group text-faint hover:text-muted aria-[current]:text-ink flex items-center gap-3 text-[12px] font-medium tracking-[0.05em] transition-colors duration-300"
+        >
+          <span
+            aria-hidden="true"
+            class="bg-line-2 h-px w-0 transition-all duration-300 group-aria-[current]:w-3"
+          />
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  // Scroll-spy: marks the section currently in view. Deferred until the DOM
+  // is ready because this script is parsed before <main> exists.
+  const start = () => {
+    const sections = [...document.querySelectorAll<HTMLElement>('[data-section]')];
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')];
+    if (!sections.length || !links.length || !('IntersectionObserver' in window)) return;
+
+    const visible = new Set<string>();
+    const setCurrent = (id: string | null) => {
+      links.forEach((link) => {
+        if (id && link.dataset.sectionLink === id) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        });
+        // The deepest visible section wins: when two overlap at a boundary,
+        // the one being scrolled into is the one worth marking.
+        let current: HTMLElement | null = null;
+        for (const section of sections) if (visible.has(section.id)) current = section;
+        // The hero has no index entry, so nothing is marked while it is in view.
+        setCurrent(current ? current.id : null);
+      },
+      { rootMargin: '-20% 0px -60% 0px', threshold: 0 },
+    );
+    sections.forEach((section) => observer.observe(section));
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+</script>

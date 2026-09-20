@@ -1,15 +1,30 @@
 ---
-import Icon from '@/components/ui/Icon.astro';
 import { site } from '@/config/site';
 
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-line border-t">
-  <div class="container-page py-8 sm:py-10">
-    <p class="text-muted flex items-center justify-center gap-1.5 text-center font-mono text-xs">
-      © {year} {site.fullName}. Built with love.
-      <Icon name="heart" size={13} class="text-accent" />
-    </p>
+<footer class="relative mt-10">
+  <div class="col relative">
+    <div aria-hidden="true" class="rule-x rule-bleed top-0"></div>
+    <span aria-hidden="true" class="node top-0 left-0 -translate-x-1/2 -translate-y-1/2"></span>
+    <span aria-hidden="true" class="node top-0 right-0 translate-x-1/2 -translate-y-1/2"></span>
+
+    <!-- Fading dot grid, the same texture as the banner, so the page closes
+         the way it opened. -->
+    <div
+      aria-hidden="true"
+      class="dotgrid pointer-events-none absolute inset-x-0 top-0 h-52"
+      style="mask-image: linear-gradient(to bottom, black, transparent); -webkit-mask-image: linear-gradient(to bottom, black, transparent)"
+    ></div>
+
+    <div class="relative flex flex-col items-center gap-2 pt-28 pb-10 text-center">
+      <p class="text-muted text-[12px]">
+        © {year} {site.fullName}. Built with Astro, hosted on GitHub Pages.
+      </p>
+      <p class="text-faint font-mono text-[10px] tracking-[0.2em] uppercase">
+        {site.role.replace('|', '·')}
+      </p>
+    </div>
   </div>
 </footer>

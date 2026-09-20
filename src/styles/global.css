@@ -1,59 +1,74 @@
 @import 'tailwindcss';
-@plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 /* ------------------------------------------------------------------
    Design tokens
-   One accent colour, warm neutrals, three type families.
+   Monochrome palette: white / black with neutral greys. The only
+   colour is a small blue used for links and focus rings, plus the
+   status dots on project cards.
 ------------------------------------------------------------------- */
 :root {
   color-scheme: light;
-  --bg: #f7f5f0;
-  --surface: #efece4;
-  --text: #1b1a17;
-  --muted: #5d5950;
-  --border: #dbd6ca;
-  --accent: #ad3d0c;
-  --accent-contrast: #ffffff;
+  --bg: #ffffff;
+  --surface: #fafafa;
+  --surface-2: #f4f4f5;
+  --text: #18181b;
+  --text-2: #3f3f46;
+  --muted: #71717a;
+  --faint: #a1a1aa;
+  --border: rgba(0, 0, 0, 0.06);
+  --border-2: rgba(0, 0, 0, 0.12);
+  --rule: rgba(0, 0, 0, 0.3);
+  --node: rgba(0, 0, 0, 0.5);
+  --accent: #2563eb;
+  --live: #10b981;
+  --building: #f59e0b;
+  --planned: #a1a1aa;
 }
 
 [data-theme='dark'] {
   color-scheme: dark;
-  --bg: #141312;
-  --surface: #1c1b19;
-  --text: #ece9e2;
-  --muted: #a39e93;
-  --border: #2e2c28;
-  --accent: #f0935a;
-  --accent-contrast: #1a0f08;
+  --bg: #000000;
+  --surface: #09090b;
+  --surface-2: #121214;
+  --text: #fafafa;
+  --text-2: #d4d4d8;
+  --muted: #a1a1aa;
+  --faint: #52525b;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-2: rgba(255, 255, 255, 0.12);
+  --rule: rgba(255, 255, 255, 0.15);
+  --node: rgba(255, 255, 255, 0.25);
+  --accent: #60a5fa;
+  --live: #34d399;
+  --building: #fbbf24;
+  --planned: #71717a;
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-ink: var(--text);
+  --color-ink-2: var(--text-2);
   --color-muted: var(--muted);
+  --color-faint: var(--faint);
   --color-line: var(--border);
+  --color-line-2: var(--border-2);
   --color-accent: var(--accent);
-  --color-accent-contrast: var(--accent-contrast);
+  --color-live: var(--live);
+  --color-building: var(--building);
+  --color-planned: var(--planned);
 
   --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
   --font-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+}
 
-  /* Fluid type scale */
-  --text-display: clamp(2.6rem, 1.6rem + 5vw, 5.25rem);
-  --text-display--line-height: 1.02;
-  --text-title: clamp(2.25rem, 1.6rem + 3.2vw, 4rem);
-  --text-title--line-height: 1.05;
-  --text-heading: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
-  --text-heading--line-height: 1.12;
-  --text-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
-  --text-lead--line-height: 1.6;
-
-  --container-page: 72rem;
-  --container-prose: 42rem;
+/* The single content column. Everything on the page aligns to it. */
+:root {
+  --col: 42rem;
+  --col-pad: 1rem;
 }
 
 @layer base {
@@ -63,24 +78,26 @@
     font-family: var(--font-sans);
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
-    scroll-padding-top: 6rem;
+    scroll-padding-top: 1.5rem;
   }
 
   body {
     min-height: 100dvh;
-    overflow-x: clip;
-    font-feature-settings: 'ss01', 'cv11';
     -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+    transition:
+      background-color 300ms ease,
+      color 300ms ease;
   }
 
   ::selection {
-    background-color: color-mix(in srgb, var(--accent) 25%, transparent);
+    background-color: color-mix(in srgb, var(--accent) 22%, transparent);
   }
 
   :focus-visible {
     outline: 2px solid var(--accent);
-    outline-offset: 3px;
-    border-radius: 2px;
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -91,46 +108,97 @@
 }
 
 @layer components {
-  .container-page {
+  /* Centred column. Padding is part of the column so the vertical edge
+     lines sit on the outside of the content. */
+  .col {
     width: 100%;
-    max-width: var(--container-page);
+    max-width: var(--col);
     margin-inline: auto;
-    padding-inline: 1.25rem;
-  }
-  @media (min-width: 640px) {
-    .container-page {
-      padding-inline: 2rem;
-    }
-  }
-  @media (min-width: 1024px) {
-    .container-page {
-      padding-inline: 3rem;
-    }
+    padding-inline: var(--col-pad);
   }
 
-  /* Vertical rhythm between page sections */
-  .section {
-    padding-block: clamp(4rem, 3rem + 5vw, 7.5rem);
+  /* Dotted "blueprint" rules ----------------------------------------- */
+  .rule-x {
+    height: 0;
+    border-top: 1px solid var(--rule);
+    mask-image: repeating-linear-gradient(
+      to right,
+      black 0,
+      black 1px,
+      transparent 1px,
+      transparent 6px
+    );
+    -webkit-mask-image: repeating-linear-gradient(
+      to right,
+      black 0,
+      black 1px,
+      transparent 1px,
+      transparent 6px
+    );
+    pointer-events: none;
+  }
+  .rule-y {
+    width: 0;
+    border-left: 1px solid var(--rule);
+    mask-image: repeating-linear-gradient(
+      to bottom,
+      black 0,
+      black 1px,
+      transparent 1px,
+      transparent 6px
+    );
+    -webkit-mask-image: repeating-linear-gradient(
+      to bottom,
+      black 0,
+      black 1px,
+      transparent 1px,
+      transparent 6px
+    );
+    pointer-events: none;
+  }
+  /* A rule that runs across the whole viewport from inside the column. */
+  .rule-bleed {
+    position: absolute;
+    left: -100vw;
+    right: -100vw;
+  }
+  /* The tiny node where two rules cross. Positioned by the caller. */
+  .node {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--node);
+    pointer-events: none;
+    z-index: 2;
   }
 
-  /* Text links inside running copy */
+  /* Dot-grid texture used in the banner, card placeholders and footer. */
+  .dotgrid {
+    background-image: radial-gradient(var(--node) 0.75px, transparent 0.75px);
+    background-size: 12px 12px;
+  }
+
+  /* Hide scrollbars on the horizontally scrolling nav pill. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Inline text link inside running copy. */
   .link {
     color: var(--text);
     text-decoration: underline;
-    text-decoration-color: var(--accent);
-    text-decoration-thickness: 1.5px;
-    text-underline-offset: 4px;
-    transition: color 150ms ease;
+    text-decoration-color: var(--border-2);
+    text-underline-offset: 3px;
+    transition:
+      color 150ms ease,
+      text-decoration-color 150ms ease;
   }
-  .link:hover,
-  .rich-text a:hover {
+  .link:hover {
     color: var(--accent);
-  }
-  .rich-text a {
-    color: var(--text);
-    text-decoration: underline;
-    text-decoration-color: var(--accent);
-    text-underline-offset: 4px;
+    text-decoration-color: currentColor;
   }
 }
 
@@ -139,13 +207,13 @@
 ------------------------------------------------------------------- */
 @media (prefers-reduced-motion: no-preference) {
   .reveal {
-    animation: reveal 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-    animation-delay: calc(var(--i, 0) * 90ms);
+    animation: reveal 600ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
   }
   @keyframes reveal {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(6px);
     }
     to {
       opacity: 1;
@@ -163,90 +231,4 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* ------------------------------------------------------------------
-   Case study prose
-------------------------------------------------------------------- */
-.prose-case {
-  --tw-prose-body: var(--text);
-  --tw-prose-headings: var(--text);
-  --tw-prose-lead: var(--muted);
-  --tw-prose-links: var(--text);
-  --tw-prose-bold: var(--text);
-  --tw-prose-counters: var(--muted);
-  --tw-prose-bullets: var(--border);
-  --tw-prose-hr: var(--border);
-  --tw-prose-quotes: var(--text);
-  --tw-prose-quote-borders: var(--accent);
-  --tw-prose-captions: var(--muted);
-  --tw-prose-code: var(--text);
-  --tw-prose-pre-code: var(--text);
-  --tw-prose-pre-bg: var(--surface);
-  --tw-prose-th-borders: var(--border);
-  --tw-prose-td-borders: var(--border);
-  max-width: none;
-  font-size: 1.0625rem;
-  line-height: 1.75;
-}
-.prose-case h2 {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: var(--text-heading);
-  line-height: 1.12;
-  letter-spacing: -0.01em;
-  margin-top: 3.5rem;
-  margin-bottom: 1rem;
-}
-.prose-case h2:first-child {
-  margin-top: 0;
-}
-.prose-case h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-top: 2.25rem;
-}
-.prose-case a {
-  text-decoration-color: var(--accent);
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 4px;
-}
-.prose-case a:hover {
-  color: var(--accent);
-}
-.prose-case :not(pre) > code {
-  font-family: var(--font-mono);
-  font-size: 0.875em;
-  font-weight: 400;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0.1em 0.35em;
-}
-.prose-case :not(pre) > code::before,
-.prose-case :not(pre) > code::after {
-  content: none;
-}
-.prose-case pre {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 0.875rem;
-  overflow-x: auto;
-  background-color: var(--surface) !important;
-}
-.prose-case img {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-.prose-case table {
-  display: block;
-  overflow-x: auto;
-}
-
-/* Shiki dual themes */
-[data-theme='dark'] .astro-code,
-[data-theme='dark'] .astro-code span {
-  color: var(--shiki-dark) !important;
-  font-style: var(--shiki-dark-font-style) !important;
-  font-weight: var(--shiki-dark-font-weight) !important;
 }

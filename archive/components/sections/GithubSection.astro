@@ -1,0 +1,108 @@
+---
+/**
+ * GitHub profile card. Always shows the handle and a profile link. Public
+ * counts (repositories, followers, member since) are filled in by the
+ * browser from GitHub's official REST API after the page loads; if the
+ * request fails or is rate-limited the placeholders simply stay blank.
+ * Nothing here runs at build time, so the static build can never break on it.
+ */
+import Section from './Section.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { githubUser, links } from '@/config/site';
+
+const stats = [
+  { key: 'public_repos', label: 'Public repos' },
+  { key: 'followers', label: 'Followers' },
+  { key: 'created_at', label: 'Member since' },
+];
+---
+
+<Section id="github" title="GitHub Activity">
+  <div class="group relative">
+    <div
+      aria-hidden="true"
+      class="border-line pointer-events-none absolute -inset-1 rounded-[14px] border"
+    ></div>
+    <div class="border-line bg-surface relative rounded-[10px] border p-4" data-github-card>
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="border-line-2 bg-bg text-ink flex size-10 items-center justify-center rounded-lg border">
+            <Icon name="github" size={20} />
+          </span>
+          <div>
+            <p class="text-ink text-[15px] font-bold tracking-tight">@{githubUser}</p>
+            <p class="text-muted text-[12px]">Code, experiments and open-source work.</p>
+          </div>
+        </div>
+        <Button href={links.github} icon="arrow-up-right">
+          View profile
+        </Button>
+      </div>
+
+      <dl class="border-line-2 divide-line-2 mt-4 grid grid-cols-3 divide-x rounded-lg border">
+        {stats.map((s) => (
+          <div class="px-3 py-2">
+            <dt class="text-faint text-[10px] font-semibold tracking-wider uppercase">{s.label}</dt>
+            <dd
+              class="text-ink mt-0.5 font-mono text-[14px] font-semibold"
+              data-github-stat={s.key}
+              aria-live="polite"
+            >
+              <span class="text-faint">—</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <p class="text-faint mt-2 text-[11px]" data-github-note>
+        Public data from GitHub, loaded in your browser.
+      </p>
+    </div>
+  </div>
+</Section>
+
+<script is:inline define:vars={{ githubUser }}>
+  // Runs only in the browser. Fails silently: the card is complete without it.
+  (async () => {
+    const card = document.querySelector('[data-github-card]');
+    if (!card || !githubUser || !('fetch' in window)) return;
+    const key = `github_user_${githubUser}`;
+    const maxAge = 6 * 60 * 60 * 1000; // 6 hours
+
+    const render = (user) => {
+      const set = (name, value) => {
+        const el = card.querySelector(`[data-github-stat="${name}"]`);
+        if (el && value !== undefined && value !== null) el.textContent = String(value);
+      };
+      set('public_repos', user.public_repos);
+      set('followers', user.followers);
+      if (user.created_at) set('created_at', new Date(user.created_at).getFullYear());
+    };
+
+    try {
+      const cached = JSON.parse(localStorage.getItem(key) || 'null');
+      if (cached && Date.now() - cached.at < maxAge) {
+        render(cached.user);
+        return;
+      }
+    } catch {
+      /* ignore cache problems */
+    }
+
+    try {
+      const res = await fetch(`https://api.github.com/users/${githubUser}`, {
+        headers: { Accept: 'application/vnd.github+json' },
+      });
+      if (!res.ok) return;
+      const user = await res.json();
+      render(user);
+      try {
+        localStorage.setItem(key, JSON.stringify({ at: Date.now(), user }));
+      } catch {
+        /* storage unavailable */
+      }
+    } catch {
+      /* offline or blocked — leave the placeholders as they are */
+    }
+  })();
+</script>

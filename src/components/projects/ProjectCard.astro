@@ -1,94 +1,101 @@
 ---
-import Icon from '@/components/ui/Icon.astro';
+/**
+ * A single project card: visual placeholder, status, title, one or two
+ * lines of description, category, tech tags and the GitHub / live links.
+ * There is no project page — the card is the whole story.
+ */
+import Button from '@/components/ui/Button.astro';
 import TagList from '@/components/ui/TagList.astro';
-import DraftBadge from '@/components/ui/DraftBadge.astro';
-import type { Project } from '@/utils/content';
-import { href } from '@/utils/url';
+import { projectCategories } from '@/config/categories';
+import type { Project } from '@/config/projects';
+import { isShown } from '@/utils/links';
 
 interface Props {
   project: Project;
 }
 
 const { project } = Astro.props;
-const { title, summary, problem, features, contribution, tech, github, demo, draft } = project.data;
-const caseStudyUrl = href(`/projects/${project.id}/`);
+const { title, description, category, tech, status, github, demo } = project;
 
-const externalLinks = [
-  github && { label: 'GitHub', url: github },
-  demo && { label: 'Live demo', url: demo },
-].filter((l): l is { label: string; url: string } => Boolean(l));
+const statusMeta = {
+  live: { label: 'Live', dot: 'bg-live' },
+  building: { label: 'Building', dot: 'bg-building' },
+  planned: { label: 'Planned', dot: 'bg-planned' },
+} as const;
+
+const initials = title
+  .split(/[\s&-]+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((w) => w.charAt(0).toUpperCase())
+  .join('');
 ---
 
-<article class="border-line bg-surface/40 rounded-xl border p-6 sm:p-7">
-  <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
-    <h4 class="text-xl font-medium tracking-tight">
-      <a href={caseStudyUrl} class="hover:text-accent transition-colors">
-        {title}
-      </a>
-    </h4>
-    {draft && <DraftBadge />}
-  </div>
+<article class="group relative flex h-full flex-col">
+  <!-- Outer soft frame, a step outside the card -->
+  <div
+    aria-hidden="true"
+    class="border-line group-hover:border-line-2 pointer-events-none absolute -inset-1 rounded-[14px] border transition-colors duration-300"
+  ></div>
 
-  <p class="text-muted mt-3 text-pretty">{summary}</p>
-
-  {problem && (
-    <div class="mt-5">
-      <h5 class="text-muted font-mono text-xs">Problem</h5>
-      <p class="mt-1.5 text-[0.9375rem] text-pretty">{problem}</p>
-    </div>
-  )}
-
-  {features.length > 0 && (
-    <div class="mt-5">
-      <h5 class="text-muted font-mono text-xs">Key features</h5>
-      <ul class="mt-2 space-y-1.5">
-        {features.map((feature) => (
-          <li class="flex gap-3 text-[0.9375rem]">
-            <span aria-hidden="true" class="bg-line mt-3 h-px w-3 shrink-0" />
-            <span class="text-pretty">{feature}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )}
-
-  {contribution && (
-    <div class="mt-5">
-      <h5 class="text-muted font-mono text-xs">My contribution</h5>
-      <p class="mt-1.5 text-[0.9375rem] text-pretty">{contribution}</p>
-    </div>
-  )}
-
-  {tech.length > 0 && (
-    <div class="mt-5">
-      <h5 class="text-muted font-mono text-xs">Tech stack</h5>
-      <TagList items={tech} label={`Technologies used in ${title}`} class="mt-2" />
-    </div>
-  )}
-
-  <div class="border-line mt-6 flex flex-wrap items-center gap-x-6 border-t pt-2">
-    <a
-      href={caseStudyUrl}
-      class="group link inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium"
-    >
-      Case study<span class="sr-only"> for {title}</span>
-      <Icon
-        name="arrow-right"
-        size={16}
-        class="transition-transform duration-200 group-hover:translate-x-0.5"
-      />
-    </a>
-    {externalLinks.map((link) => (
-      <a
-        href={link.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-muted hover:text-accent inline-flex min-h-11 items-center gap-1.5 text-[0.9375rem] transition-colors"
+  <div class="border-line bg-surface group-hover:bg-surface-2 relative flex h-full flex-col overflow-hidden rounded-[10px] border transition-colors duration-300">
+    <!-- Visual placeholder. Swap for a screenshot later if you like. -->
+    <div class="dotgrid border-line relative aspect-[16/9] border-b">
+      <div
+        aria-hidden="true"
+        class="from-surface/80 absolute inset-0 bg-gradient-to-t to-transparent"
+      ></div>
+      <span
+        aria-hidden="true"
+        class="text-faint absolute inset-0 flex items-center justify-center font-mono text-3xl font-semibold tracking-widest opacity-60 transition-opacity duration-300 group-hover:opacity-90"
       >
-        {link.label}
-        <span class="sr-only">for {title} (opens in a new tab)</span>
-        <Icon name="arrow-up-right" size={15} />
-      </a>
-    ))}
+        {initials}
+      </span>
+      <span class="bg-bg/80 text-muted border-line absolute top-2 left-2 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold tracking-wider uppercase backdrop-blur-sm">
+        {projectCategories[category]}
+      </span>
+      {status && (
+        <span class="bg-bg/80 text-ink-2 border-line absolute top-2 right-2 inline-flex items-center gap-1.5 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold backdrop-blur-sm">
+          <span aria-hidden="true" class:list={['size-1.5 rounded-full', statusMeta[status].dot]} />
+          {statusMeta[status].label}
+        </span>
+      )}
+    </div>
+
+    <div class="flex flex-1 flex-col gap-2.5 p-3.5">
+      <h3 class="text-ink text-[15px] leading-tight font-bold tracking-tight">{title}</h3>
+      <p class="text-muted text-[13px] leading-relaxed text-pretty">{description}</p>
+
+      {tech.length > 0 ? (
+        <TagList items={tech} label={`Technologies used in ${title}`} class="mt-auto pt-1" />
+      ) : (
+        <p class="text-faint mt-auto pt-1 font-mono text-[11px]" title="Technologies not added yet">
+          Tech: TODO
+        </p>
+      )}
+
+      {(isShown(github) || isShown(demo)) && (
+        <div class="border-line mt-1 flex flex-wrap gap-1.5 border-t pt-3">
+          {isShown(github) && (
+            <Button
+              href={github}
+              icon="github"
+              todoLabel={`GitHub link for ${title} not added yet`}
+            >
+              GitHub
+            </Button>
+          )}
+          {isShown(demo) && (
+            <Button
+              href={demo}
+              icon="arrow-up-right"
+              todoLabel={`Live link for ${title} not added yet`}
+            >
+              Live
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
   </div>
 </article>

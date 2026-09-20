@@ -1,20 +1,102 @@
 ---
 import Section from './Section.astro';
-import Timeline from './Timeline.astro';
-import { getExperience } from '@/utils/content';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import TagList from '@/components/ui/TagList.astro';
+import { experience } from '@/config/experience';
+import { isTodo, isShown } from '@/utils/links';
 
-const entries = await getExperience();
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w.charAt(0).toUpperCase())
+    .join('');
 ---
 
-<Section
-  id="experience"
-  index="02"
-  eyebrow="Experience"
-  title="Where I’ve worked and what I worked on."
->
-  {entries.length > 0 ? (
-    <Timeline entries={entries} />
+<Section id="experience" title="Experience">
+  {experience.length === 0 ? (
+    <p class="text-muted text-[14px]">Experience entries will be added soon.</p>
   ) : (
-    <p class="text-muted">Experience entries will be added soon.</p>
+    <ol class="divide-line-2 divide-y">
+      {experience.map((entry) => (
+        <li class="grid gap-x-4 gap-y-3 py-5 first:pt-0 last:pb-0 sm:grid-cols-[3rem_1fr]">
+          <div
+            aria-hidden="true"
+            class="border-line-2 bg-surface text-muted flex size-12 items-center justify-center rounded-lg border font-mono text-[13px] font-semibold"
+          >
+            {initials(entry.organization)}
+          </div>
+
+          <article class="min-w-0">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 class="text-ink text-[15px] font-bold tracking-tight">{entry.organization}</h3>
+              <p class="text-muted font-mono text-[11px]">
+                {isTodo(entry.dates) ? (
+                  <span class="text-faint" title="Dates not added yet">
+                    Dates: TODO
+                  </span>
+                ) : (
+                  entry.dates
+                )}
+              </p>
+            </div>
+            <p class="text-ink-2 mt-0.5 text-[13px] font-medium">{entry.role}</p>
+            <p class="text-muted mt-1 flex items-center gap-1.5 text-[12px]">
+              <Icon name="map-pin" size={12} class="text-faint" />
+              {isTodo(entry.arrangement) ? (
+                <span class="text-faint" title="Work arrangement not added yet">
+                  Arrangement: TODO
+                </span>
+              ) : (
+                entry.arrangement
+              )}
+            </p>
+
+            <ul class="text-ink-2 mt-3 space-y-1.5 text-[13.5px] leading-relaxed">
+              {entry.bullets.map((b) => (
+                <li class="flex gap-2.5">
+                  <span aria-hidden="true" class="text-faint">
+                    •
+                  </span>
+                  <span class="text-pretty">{b}</span>
+                </li>
+              ))}
+            </ul>
+
+            {entry.metrics && entry.metrics.length > 0 && (
+              <dl class="border-line-2 bg-surface mt-4 grid grid-cols-2 divide-x divide-line-2 rounded-lg border sm:grid-cols-4">
+                {entry.metrics.map((m) => (
+                  <div class="px-3 py-2">
+                    <dt class="text-faint text-[10px] font-semibold tracking-wider uppercase">
+                      {m.label}
+                    </dt>
+                    <dd class="text-ink mt-0.5 text-[14px] font-semibold">{m.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+
+            <TagList
+              items={entry.tech}
+              label={`Technologies used at ${entry.organization}`}
+              class="mt-4"
+            />
+
+            {isShown(entry.link) && (
+              <div class="mt-4">
+                <Button
+                  href={entry.link}
+                  icon="arrow-up-right"
+                  todoLabel="Company link not added yet"
+                >
+                  Website
+                </Button>
+              </div>
+            )}
+          </article>
+        </li>
+      ))}
+    </ol>
   )}
 </Section>

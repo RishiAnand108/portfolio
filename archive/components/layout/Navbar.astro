@@ -1,0 +1,99 @@
+---
+/**
+ * Sticky pill navigation. Fixed to the top, aligned to the right edge of the
+ * content column on desktop and full-width (horizontally scrollable) on
+ * mobile. Transparent over the banner, gains a frosted background on scroll.
+ *
+ * On the home page a scroll-spy marks the section in view on every
+ * `[data-nav-link]` on the page (this pill and the desktop side index).
+ */
+import ThemeToggle from '@/components/ui/ThemeToggle.astro';
+import { nav } from '@/config/site';
+import { href, normalizePath } from '@/utils/url';
+
+const isHome = normalizePath(Astro.url.pathname) === '/';
+---
+
+<header class="pointer-events-none fixed inset-x-0 top-2 z-50 sm:top-3" data-site-header>
+  <div class="col flex justify-end">
+    <div
+      class="border-line-2 pointer-events-auto flex max-w-full items-center gap-1 rounded-full border border-transparent px-1.5 py-1 transition-[background-color,border-color,box-shadow] duration-300 data-[scrolled]:border-line-2 data-[scrolled]:bg-bg/85 data-[scrolled]:shadow-[0_4px_24px_rgba(0,0,0,0.05)] data-[scrolled]:backdrop-blur-md"
+      data-nav-pill
+    >
+      <nav aria-label="Main" class="no-scrollbar min-w-0 overflow-x-auto">
+        <ul class="flex items-center gap-0.5">
+          {nav.map((item) => (
+            <li class="shrink-0">
+              <a
+                href={href(item.path)}
+                data-nav-link
+                data-section-link={item.section}
+                class="text-muted hover:text-ink aria-[current]:text-ink relative inline-flex min-h-8 items-center rounded-full px-2.5 text-[12px] font-medium tracking-[0.04em] transition-colors duration-300 aria-[current]:bg-surface-2"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <span aria-hidden="true" class="bg-line-2 mx-0.5 h-4 w-px shrink-0"></span>
+      <ThemeToggle />
+    </div>
+  </div>
+</header>
+
+<script is:inline define:vars={{ isHome }}>
+  // --- Frosted background once the page has scrolled ---------------------
+  const pill = document.querySelector('[data-nav-pill]');
+  if (pill) {
+    const update = () => {
+      if (window.scrollY > 16) pill.setAttribute('data-scrolled', '');
+      else pill.removeAttribute('data-scrolled');
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+  }
+
+  // --- Scroll-spy ----------------------------------------------------------
+  // Marks the section currently in view. Home page only; no effect elsewhere.
+  // Deferred: this script runs while the header is parsed, before <main> and
+  // its sections exist.
+  const startScrollSpy = () => {
+    const sections = [...document.querySelectorAll('[data-section]')];
+    const links = [...document.querySelectorAll('[data-nav-link]')];
+    if (!sections.length || !links.length || !('IntersectionObserver' in window)) return;
+
+    const visible = new Set();
+    const setCurrent = (id) => {
+      links.forEach((link) => {
+        if (link.dataset.sectionLink === id) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        });
+        // The deepest visible section wins: when two overlap at a boundary,
+        // the one being scrolled into is the one worth marking.
+        let current = null;
+        for (const section of sections) if (visible.has(section.id)) current = section;
+        if (current) setCurrent(current.id);
+      },
+      // Top offset matches `scroll-padding-top` in global.css.
+      { rootMargin: '-72px 0px -55% 0px', threshold: 0 },
+    );
+    sections.forEach((section) => observer.observe(section));
+  };
+
+  if (isHome) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', startScrollSpy, { once: true });
+    } else {
+      startScrollSpy();
+    }
+  }
+</script>

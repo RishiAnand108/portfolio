@@ -1,0 +1,45 @@
+---
+import Section from './Section.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { highlights } from '@/config/achievements';
+import { isShown } from '@/utils/links';
+---
+
+<Section id="highlights" title="Highlights">
+  <ul class="grid gap-4 sm:grid-cols-2">
+    {highlights.map((item) => (
+      <li class="group relative flex">
+        <div
+          aria-hidden="true"
+          class="border-line group-hover:border-line-2 pointer-events-none absolute -inset-1 rounded-[14px] border transition-colors duration-300"
+        />
+        <article class="border-line bg-surface group-hover:bg-surface-2 relative flex w-full flex-col overflow-hidden rounded-[10px] border transition-colors duration-300">
+          <div class="flex items-center justify-between gap-2 px-3.5 pt-3">
+            <span class="bg-bg text-muted border-line inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[10px] font-semibold tracking-wider uppercase">
+              <Icon name="award" size={11} class="text-faint" />
+              {item.badge}
+            </span>
+            {item.period && <span class="text-faint font-mono text-[11px]">{item.period}</span>}
+          </div>
+          <div aria-hidden="true" class="rule-x mx-3.5 mt-3" />
+          <div class="flex flex-1 flex-col gap-2 p-3.5">
+            <h3 class="text-ink text-[14px] leading-snug font-bold tracking-tight">{item.title}</h3>
+            <p class="text-muted text-[13px] leading-relaxed text-pretty">{item.detail}</p>
+            {isShown(item.link) && (
+              <div class="mt-auto pt-1">
+                <Button
+                  href={item.link}
+                  icon="arrow-up-right"
+                  todoLabel={`Link for ${item.title} not added yet`}
+                >
+                  Details
+                </Button>
+              </div>
+            )}
+          </div>
+        </article>
+      </li>
+    ))}
+  </ul>
+</Section>

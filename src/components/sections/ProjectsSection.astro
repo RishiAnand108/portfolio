@@ -1,47 +1,27 @@
 ---
 import Section from './Section.astro';
+import Button from '@/components/ui/Button.astro';
 import ProjectCard from '@/components/projects/ProjectCard.astro';
-import { projectCategories, type ProjectCategory } from '@/config/categories';
-import { getProjects } from '@/utils/content';
-
-const projects = await getProjects();
-
-// Only render categories that actually contain projects, in the order they are declared.
-const groups = (Object.keys(projectCategories) as ProjectCategory[])
-  .map((key) => ({
-    key,
-    label: projectCategories[key],
-    items: projects.filter((p) => p.data.category === key),
-  }))
-  .filter((group) => group.items.length > 0);
+import { projects } from '@/config/projects';
+import { links } from '@/config/site';
 ---
 
-<Section id="projects" index="03" eyebrow="Projects" title="Things I’ve built, and how they work.">
-  <p slot="aside" class="text-muted mt-6 max-w-xs text-[0.9375rem] text-pretty">
-    Grouped by the kind of engineering involved. Each card links to a longer case study covering the
-    architecture and the decisions behind it.
-  </p>
+<Section id="projects" title="Projects">
+  {links.github && (
+    <Button slot="action" href={links.github} icon="github">
+      All repositories
+    </Button>
+  )}
 
-  {groups.length > 0 ? (
-    <div class="space-y-14">
-      {groups.map((group) => (
-        <div>
-          <h3 class="text-muted flex items-center gap-3 font-mono text-xs">
-            <span>{group.label}</span>
-            <span aria-hidden="true" class="bg-line h-px flex-1" />
-            <span aria-hidden="true">{String(group.items.length).padStart(2, '0')}</span>
-          </h3>
-          <ul class="mt-5 space-y-5">
-            {group.items.map((project) => (
-              <li>
-                <ProjectCard project={project} />
-              </li>
-            ))}
-          </ul>
-        </div>
+  {projects.length > 0 ? (
+    <ul class="grid gap-4 sm:grid-cols-2">
+      {projects.map((project) => (
+        <li class="flex">
+          <ProjectCard project={project} />
+        </li>
       ))}
-    </div>
+    </ul>
   ) : (
-    <p class="text-muted">Projects will be added soon.</p>
+    <p class="text-muted text-[14px]">Projects will be added soon.</p>
   )}
 </Section>

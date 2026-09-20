@@ -1,9 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <style>
-    rect { fill: #1b1a17 } text { fill: #f7f5f0 } circle { fill: #f0935a }
-    @media (prefers-color-scheme: dark) { rect { fill: #ece9e2 } text { fill: #141312 } circle { fill: #ad3d0c } }
+    rect { fill: #18181b } text { fill: #fafafa }
+    @media (prefers-color-scheme: dark) { rect { fill: #fafafa } text { fill: #09090b } }
   </style>
   <rect width="64" height="64" rx="14"/>
-  <text x="29" y="46" font-family="Georgia, 'Times New Roman', serif" font-size="42" text-anchor="middle">R</text>
-  <circle cx="49" cy="43" r="4"/>
+  <text x="32" y="45" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="38" font-weight="700" text-anchor="middle">R</text>
 </svg>
