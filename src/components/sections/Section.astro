@@ -4,18 +4,17 @@
  * dotted rule on top, the small bold heading with a rule beneath it, and the
  * content. Keeping it here means every section looks identical.
  */
+import EdgeRule from '@/components/ui/EdgeRule.astro';
 import SectionHeading from '@/components/ui/SectionHeading.astro';
 
 interface Props {
   /** Anchor id — must match the `section` value in the nav config. */
   id: string;
   title: string;
-  /** Optional one-liner shown under the heading, above the content. */
-  intro?: string;
   class?: string;
 }
 
-const { id, title, intro, class: className } = Astro.props;
+const { id, title, class: className } = Astro.props;
 ---
 
 <section
@@ -24,15 +23,11 @@ const { id, title, intro, class: className } = Astro.props;
   aria-labelledby={`${id}-title`}
   data-section
 >
-  <div aria-hidden="true" class="rule-x rule-bleed top-0"></div>
-  <span aria-hidden="true" class="node top-0 -left-4 -translate-x-1/2 -translate-y-1/2"></span>
-  <span aria-hidden="true" class="node top-0 -right-4 translate-x-1/2 -translate-y-1/2"></span>
+  <EdgeRule variant="top" />
 
   <SectionHeading id={`${id}-title`} title={title}>
     <slot name="action" slot="action" />
   </SectionHeading>
-
-  {intro && <p class="text-muted mt-4 text-[13.5px] leading-relaxed text-pretty">{intro}</p>}
 
   <div class="pt-5 pb-6">
     <slot />

@@ -1,0 +1,44 @@
+---
+/**
+ * The "blueprint" edge: a full-bleed dotted rule plus the two tiny nodes where
+ * it crosses the column's vertical lines. Renders three absolutely positioned
+ * siblings and no wrapper, so the parent must be `relative`.
+ *
+ *  - bottom     along the parent's bottom edge (hero rows, section headings)
+ *  - top        along the parent's top edge (sections)
+ *  - top-flush  top edge of a parent that is the `.col` box itself (footer)
+ *
+ * The -left-4 / -right-4 offsets equal `--col-pad` (1rem) in global.css: they
+ * push the nodes from the content box out to the column lines. Change both
+ * together. Class strings stay whole literals so Tailwind can see them.
+ */
+interface Props {
+  variant: 'top' | 'bottom' | 'top-flush';
+}
+
+const { variant } = Astro.props;
+
+const edges = {
+  bottom: {
+    rule: 'rule-x rule-bleed bottom-0',
+    left: 'node bottom-0 -left-4 -translate-x-1/2 translate-y-1/2',
+    right: 'node -right-4 bottom-0 translate-x-1/2 translate-y-1/2',
+  },
+  top: {
+    rule: 'rule-x rule-bleed top-0',
+    left: 'node top-0 -left-4 -translate-x-1/2 -translate-y-1/2',
+    right: 'node top-0 -right-4 translate-x-1/2 -translate-y-1/2',
+  },
+  'top-flush': {
+    rule: 'rule-x rule-bleed top-0',
+    left: 'node top-0 left-0 -translate-x-1/2 -translate-y-1/2',
+    right: 'node top-0 right-0 translate-x-1/2 -translate-y-1/2',
+  },
+} as const;
+
+const edge = edges[variant];
+---
+
+<div aria-hidden="true" class={edge.rule}></div>
+<span aria-hidden="true" class={edge.left}></span>
+<span aria-hidden="true" class={edge.right}></span>

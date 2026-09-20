@@ -1,12 +1,15 @@
 @import 'tailwindcss';
 
+/* archive/ is parked code outside the build; keep its utilities out of the CSS. */
+@source not '../../archive';
+
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 /* ------------------------------------------------------------------
    Design tokens
    Monochrome palette: white / black with neutral greys. The only
-   colour is a small blue used for links and focus rings, plus the
-   status dots on project cards.
+   colour is a small blue used for focus rings and text selection,
+   plus the status and availability dots.
 ------------------------------------------------------------------- */
 :root {
   color-scheme: light;
@@ -176,29 +179,6 @@
   .dotgrid {
     background-image: radial-gradient(var(--node) 0.75px, transparent 0.75px);
     background-size: 12px 12px;
-  }
-
-  /* Hide scrollbars on the horizontally scrolling nav pill. */
-  .no-scrollbar {
-    scrollbar-width: none;
-  }
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Inline text link inside running copy. */
-  .link {
-    color: var(--text);
-    text-decoration: underline;
-    text-decoration-color: var(--border-2);
-    text-underline-offset: 3px;
-    transition:
-      color 150ms ease,
-      text-decoration-color 150ms ease;
-  }
-  .link:hover {
-    color: var(--accent);
-    text-decoration-color: currentColor;
   }
 }
 

@@ -6,43 +6,24 @@
  */
 import HeroBanner from './HeroBanner.astro';
 import Button from '@/components/ui/Button.astro';
+import EdgeRule from '@/components/ui/EdgeRule.astro';
 import ThemeToggle from '@/components/ui/ThemeToggle.astro';
-import type { IconName } from '@/components/ui/Icon.astro';
-import { hero, links, site } from '@/config/site';
+import { hero, links, site, socials as allSocials } from '@/config/site';
 import { href } from '@/utils/url';
 import { isShown } from '@/utils/links';
 
 const initial = site.name.charAt(0);
 
-interface Social {
-  label: string;
-  url: string;
-  icon: IconName;
-}
-
-const allSocials: Social[] = [
-  { label: 'GitHub', url: links.github, icon: 'github' },
-  { label: 'LinkedIn', url: links.linkedin, icon: 'linkedin' },
-  { label: 'Twitter', url: links.x, icon: 'x' },
-  { label: 'Email', url: links.email ? `mailto:${links.email}` : '', icon: 'mail' },
-];
+// Entries without a URL are hidden; a 'TODO' URL renders as a disabled pill.
 const socials = allSocials.filter((s) => isShown(s.url));
 ---
 
-<section id="home" class="relative" aria-labelledby="hero-title" data-hero>
+<section id="home" class="relative" aria-labelledby="hero-title">
   <header>
     <!-- Cinematic banner, full column width, with the live clock -->
     <div class="relative">
       <HeroBanner />
-      <div aria-hidden="true" class="rule-x rule-bleed bottom-0"></div>
-      <span
-        aria-hidden="true"
-        class="node bottom-0 -left-4 -translate-x-1/2 translate-y-1/2"
-      ></span>
-      <span
-        aria-hidden="true"
-        class="node -right-4 bottom-0 translate-x-1/2 translate-y-1/2"
-      ></span>
+      <EdgeRule variant="bottom" />
     </div>
 
     <!-- Profile row -->
@@ -52,7 +33,7 @@ const socials = allSocials.filter((s) => isShown(s.url));
           {site.avatar ? (
             <img
               src={href(site.avatar)}
-              alt="Rishikesh cartoon profile portrait"
+              alt={site.avatarAlt}
               width="80"
               height="80"
               class="bg-surface-2 size-16 rounded-[5px] object-cover object-center sm:size-20"
@@ -83,15 +64,7 @@ const socials = allSocials.filter((s) => isShown(s.url));
         <ThemeToggle />
       </div>
 
-      <div aria-hidden="true" class="rule-x rule-bleed bottom-0"></div>
-      <span
-        aria-hidden="true"
-        class="node bottom-0 -left-4 -translate-x-1/2 translate-y-1/2"
-      ></span>
-      <span
-        aria-hidden="true"
-        class="node -right-4 bottom-0 translate-x-1/2 translate-y-1/2"
-      ></span>
+      <EdgeRule variant="bottom" />
     </div>
   </header>
 

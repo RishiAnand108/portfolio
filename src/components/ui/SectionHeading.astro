@@ -3,6 +3,8 @@
  * Small bold section title with a full-bleed dotted rule beneath it and
  * nodes where the rule meets the column edges.
  */
+import EdgeRule from './EdgeRule.astro';
+
 interface Props {
   id: string;
   title: string;
@@ -15,7 +17,5 @@ const { id, title } = Astro.props;
     {title}
   </h2>
   <slot name="action" />
-  <div aria-hidden="true" class="rule-x rule-bleed bottom-0"></div>
-  <span aria-hidden="true" class="node bottom-0 -left-4 -translate-x-1/2 translate-y-1/2"></span>
-  <span aria-hidden="true" class="node -right-4 bottom-0 translate-x-1/2 translate-y-1/2"></span>
+  <EdgeRule variant="bottom" />
 </div>

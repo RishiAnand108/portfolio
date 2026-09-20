@@ -35,6 +35,8 @@ export const site = {
    * Leave empty to show a monogram fallback.
    */
   avatar: '/avatar.webp',
+  /** Describes the picture itself. Update it when you change the avatar. */
+  avatarAlt: 'Rishikesh cartoon profile portrait',
 
   /** Shown in the hero. Set `show: false` to hide it. */
   availability: {
@@ -71,6 +73,18 @@ export const links = {
   // TODO (Rishikesh): put resume.pdf in /public and set this to '/resume.pdf' (or any external URL).
   resume: TODO,
 } as const;
+
+/**
+ * Social pills in the hero, in display order. `icon` is a name from
+ * src/components/ui/Icon.astro. An empty `url` hides the pill; 'TODO' shows a
+ * disabled placeholder.
+ */
+export const socials = [
+  { label: 'GitHub', url: links.github, icon: 'github' },
+  { label: 'LinkedIn', url: links.linkedin, icon: 'linkedin' },
+  { label: 'Twitter', url: links.x, icon: 'x' },
+  { label: 'Email', url: links.email ? `mailto:${links.email}` : '', icon: 'mail' },
+] as const;
 
 /**
  * Desktop side index — the site's only navigation. Every entry is a section

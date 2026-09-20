@@ -9,6 +9,7 @@ import TagList from '@/components/ui/TagList.astro';
 import { projectCategories } from '@/config/categories';
 import type { Project } from '@/config/projects';
 import { isShown } from '@/utils/links';
+import { initials } from '@/utils/text';
 
 interface Props {
   project: Project;
@@ -23,12 +24,7 @@ const statusMeta = {
   planned: { label: 'Planned', dot: 'bg-planned' },
 } as const;
 
-const initials = title
-  .split(/[\s&-]+/)
-  .filter(Boolean)
-  .slice(0, 2)
-  .map((w) => w.charAt(0).toUpperCase())
-  .join('');
+const monogram = initials(title);
 ---
 
 <article class="group relative flex h-full flex-col">
@@ -49,7 +45,7 @@ const initials = title
         aria-hidden="true"
         class="text-faint absolute inset-0 flex items-center justify-center font-mono text-3xl font-semibold tracking-widest opacity-60 transition-opacity duration-300 group-hover:opacity-90"
       >
-        {initials}
+        {monogram}
       </span>
       <span class="bg-bg/80 text-muted border-line absolute top-2 left-2 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold tracking-wider uppercase backdrop-blur-sm">
         {projectCategories[category]}

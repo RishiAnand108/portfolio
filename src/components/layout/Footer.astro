@@ -1,4 +1,5 @@
 ---
+import EdgeRule from '@/components/ui/EdgeRule.astro';
 import { site } from '@/config/site';
 
 const year = new Date().getFullYear();
@@ -6,9 +7,7 @@ const year = new Date().getFullYear();
 
 <footer class="relative mt-10">
   <div class="col relative">
-    <div aria-hidden="true" class="rule-x rule-bleed top-0"></div>
-    <span aria-hidden="true" class="node top-0 left-0 -translate-x-1/2 -translate-y-1/2"></span>
-    <span aria-hidden="true" class="node top-0 right-0 translate-x-1/2 -translate-y-1/2"></span>
+    <EdgeRule variant="top-flush" />
 
     <!-- Fading dot grid, the same texture as the banner, so the page closes
          the way it opened. -->

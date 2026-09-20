@@ -13,23 +13,23 @@ Old URLs (`/about`, `/experience`, `/projects`, `/projects/<slug>`, `/skills`, `
 
 ## Tech stack
 
-| Area      | Choice                                                                       |
-| --------- | ---------------------------------------------------------------------------- |
-| Framework | [Astro](https://astro.build) (static output, no JS framework)                |
-| Language  | TypeScript (strict)                                                          |
-| Styling   | Tailwind CSS v4 + a small token layer in `src/styles/global.css`             |
-| Content   | Plain typed data files in `src/config/`                                      |
-| Fonts     | Geist and Geist Mono — self-hosted, no CDN                                   |
-| Icons     | Inline SVG (Lucide paths) via `src/components/ui/Icon.astro`                 |
-| SEO       | Canonical URLs, Open Graph/Twitter tags, sitemap, `robots.txt`, social image |
-| Tooling   | ESLint, Prettier, `astro check`, a post-build HTML audit                     |
-| Client JS | Three small scripts: theme toggle, side-index scroll-spy, banner clock       |
+| Area      | Choice                                                                                                                                 |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework | [Astro](https://astro.build) (static output, no JS framework)                                                                          |
+| Language  | TypeScript (strict)                                                                                                                    |
+| Styling   | Tailwind CSS v4 + a small token layer in `src/styles/global.css`                                                                       |
+| Content   | Plain typed data files in `src/config/`                                                                                                |
+| Fonts     | Geist and Geist Mono — self-hosted, no CDN                                                                                             |
+| Icons     | Inline SVG (Lucide paths) via `src/components/ui/Icon.astro`                                                                           |
+| SEO       | Canonical URLs, Open Graph/Twitter tags, sitemap, `robots.txt`, social image                                                           |
+| Tooling   | ESLint, Prettier, `astro check`, a post-build HTML audit                                                                               |
+| Client JS | Four small scripts: theme toggle, side-index scroll-spy, banner clock, experience expand/collapse (plus a tiny inline theme bootstrap) |
 
 No analytics, no trackers, no backend.
 
 ## Local setup
 
-Requires **Node.js 20.3+** (22 recommended).
+Requires **Node.js 22.12+**.
 
 ```bash
 npm install
@@ -40,19 +40,19 @@ The site runs at <http://localhost:4321>.
 
 ## Commands
 
-| Command                | What it does                                                          |
-| ---------------------- | --------------------------------------------------------------------- |
-| `npm run dev`          | Start the dev server                                                  |
-| `npm run build`        | Production build into `dist/`                                         |
-| `npm run preview`      | Serve the production build locally                                    |
-| `npm run check`        | Type-check `.astro` and `.ts` files                                   |
-| `npm run lint`         | ESLint (including accessibility rules for Astro templates)            |
-| `npm run format`       | Format everything with Prettier                                       |
-| `npm run format:check` | Check formatting without writing                                      |
-| `npm run audit`        | Audit `dist/` — headings, landmarks, alt text, meta tags, links       |
-| `npm run verify`       | format check → lint → type check → build → audit (run before deploy)  |
-| `npm run og`           | Regenerate `public/og.png` and the PNG favicons                       |
-| `npm run banner -- X`  | Turn image `X` into the two hero-banner WebP files in `public/images` |
+| Command                | What it does                                                              |
+| ---------------------- | ------------------------------------------------------------------------- |
+| `npm run dev`          | Start the dev server                                                      |
+| `npm run build`        | Production build into `dist/`                                             |
+| `npm run preview`      | Serve the production build locally                                        |
+| `npm run check`        | Type-check `.astro` and `.ts` files                                       |
+| `npm run lint`         | ESLint (including accessibility rules for Astro templates)                |
+| `npm run format`       | Format everything with Prettier                                           |
+| `npm run format:check` | Check formatting without writing                                          |
+| `npm run audit`        | Audit `dist/` — headings, landmarks, alt text, meta tags, links           |
+| `npm run verify`       | format check → lint → type check → build → audit (run before deploy)      |
+| `npm run og`           | Regenerate `public/og.png`, the PNG/ICO favicons and the apple-touch icon |
+| `npm run banner -- X`  | Turn image `X` into the two hero-banner WebP files in `public/images`     |
 
 ## Project structure
 
@@ -60,8 +60,8 @@ The site runs at <http://localhost:4321>.
 ├── .github/workflows/deploy.yml     GitHub Pages deployment
 ├── astro.config.mjs                 site URL, redirects, integrations
 ├── archive/                         retired content and components, not built (safe to delete)
-├── public/                          favicon, social image, CNAME, .nojekyll
-│   └── images/hero-banner*.webp     the hero banner (add avatar.png and resume.pdf here too)
+├── public/                          favicons, avatar, social image, CNAME, .nojekyll
+│   └── images/hero-banner*.webp     the hero banner (add resume.pdf to public/ too)
 ├── scripts/
 │   ├── generate-og.mjs              builds og.png + PNG favicons
 │   ├── prepare-banner.mjs           converts any image into the hero banner WebP files
@@ -76,14 +76,16 @@ The site runs at <http://localhost:4321>.
     │   └── categories.ts            project categories
     ├── components/
     │   ├── layout/                  SideIndex (desktop index + scroll-spy), Footer, Seo
-    │   ├── ui/                      Button, Tag, TagList, Icon, ThemeToggle, SectionHeading
+    │   ├── ui/                      Button, Tag, TagList, Icon, ThemeToggle, SectionHeading,
+    │   │                            EdgeRule (dotted rule + corner nodes)
     │   ├── projects/ProjectCard     one project card
+    │   ├── experience/ExperienceItem one expandable experience row
     │   └── sections/                Section (shared shell), Hero, HeroBanner (banner + live
     │                                clock), Experience, Projects, Skills, Highlights
     ├── layouts/BaseLayout.astro     page shell: fonts, theme script, column edge lines
     ├── pages/                       index (the whole site), 404, robots.txt
     ├── styles/global.css            design tokens, dotted rules, column width
-    └── utils/                       URL helpers (base-path aware), TODO-link helpers
+    └── utils/                       URL helpers (base-path aware), TODO-link helpers, initials
 ```
 
 ## Updating content
@@ -107,7 +109,9 @@ So to add a link later, replace the word `TODO` with the URL. Nothing else chang
 
 - `links.email`, `links.github`, `links.linkedin`, `links.x` — set.
 - `links.resume` — `TODO`. Put `resume.pdf` in `public/` and set this to `'/resume.pdf'`.
-- `site.avatar` — empty. Put a photo in `public/` and set this to `'/avatar.png'`.
+- `site.avatar` — set to `'/avatar.webp'` (a file in `public/`). Leave it empty to show a
+  monogram instead. `site.avatarAlt` describes the picture; update it with the image.
+- `socials` — the hero's social pills, in display order. Each takes its URL from `links`.
 - `site.banner` — the cinematic banner above the profile row. To change the image, run
   `npm run banner -- path/to/image.png`; it writes the two WebP files the config points at.
   Update `alt` to describe the new picture. Set `src` to `''` for a plain dot-grid strip.
@@ -127,7 +131,7 @@ One object per card:
   id: 'my-project',
   title: 'My Project',
   description: 'One or two lines. That is the whole description — there are no project pages.',
-  category: 'backend',            // backend | ai-ml | research | tools (see categories.ts)
+  category: 'ai-ml-full-stack',   // a key from categories.ts; add new keys there
   tech: ['Python', 'FastAPI'],
   status: 'live',                 // optional: live | building | planned
   github: 'https://github.com/you/my-project',   // or 'TODO', or omit
@@ -140,7 +144,7 @@ that still need confirming.
 
 ### Experience — `src/config/experience.ts`
 
-One object per role, rendered as an expandable card (the first starts open): `organization`,
+One object per role, rendered as an expandable row (all start collapsed): `organization`,
 `role`, `start`, `end` (a date or `'Present'`), `location`, optional `description`,
 `responsibilities`, `tech`, optional `metrics` (only verifiable numbers), optional `logo`
 (a path inside `public/`; initials are shown without one) and optional `link`. Dates and
@@ -159,7 +163,8 @@ Groups of plain strings. No ratings, no percentages.
 There is no GitHub section. The profile is linked from the hero socials,
 the "All repositories" button on the Projects heading and each project card.
 
-After changing your name or role, run `npm run og` to regenerate the social preview image.
+After changing your name, role or avatar, run `npm run og` to regenerate the social preview
+image and icons (the text is set at the top of `scripts/generate-og.mjs`).
 
 ## Site URL and base path
 

@@ -14,13 +14,6 @@ export function normalizePath(pathname: string): string {
   return p === '' ? '/' : p;
 }
 
-export function isActive(currentPathname: string, navPath: string): boolean {
-  const current = normalizePath(currentPathname);
-  const target = normalizePath(href(navPath));
-  if (target === '/') return current === '/';
-  return current === target || current.startsWith(`${target}/`);
-}
-
 export function isExternal(url: string): boolean {
   return /^https?:\/\//i.test(url);
 }

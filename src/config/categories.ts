@@ -5,8 +5,3 @@ export const projectCategories = {
 } as const;
 
 export type ProjectCategory = keyof typeof projectCategories;
-
-export const categoryKeys = Object.keys(projectCategories) as [
-  ProjectCategory,
-  ...ProjectCategory[],
-];

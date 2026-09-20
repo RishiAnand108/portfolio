@@ -36,19 +36,32 @@ import { href } from '@/utils/url';
 </nav>
 
 <script>
-  // Scroll-spy: marks the section currently in view. Deferred until the DOM
-  // is ready because this script is parsed before <main> exists.
+  // Scroll-spy: marks the section currently in view. Astro bundles this as a
+  // module script, which is deferred, so <main> already exists when it runs.
   const start = () => {
     const sections = [...document.querySelectorAll<HTMLElement>('[data-section]')];
     const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')];
     if (!sections.length || !links.length || !('IntersectionObserver' in window)) return;
 
     const visible = new Set<string>();
+    let atBottom = false;
     const setCurrent = (id: string | null) => {
       links.forEach((link) => {
         if (id && link.dataset.sectionLink === id) link.setAttribute('aria-current', 'location');
         else link.removeAttribute('aria-current');
       });
+    };
+
+    const update = () => {
+      // The deepest visible section wins: when two overlap at a boundary,
+      // the one being scrolled into is the one worth marking.
+      let current: HTMLElement | null = null;
+      for (const section of sections) if (visible.has(section.id)) current = section;
+      // On tall screens the last section cannot scroll up into the detection
+      // band, so reaching the end of the page marks it instead.
+      if (atBottom) current = sections[sections.length - 1] ?? null;
+      // The hero has no index entry, so nothing is marked while it is in view.
+      setCurrent(current ? current.id : null);
     };
 
     const observer = new IntersectionObserver(
@@ -57,21 +70,25 @@ import { href } from '@/utils/url';
           if (entry.isIntersecting) visible.add(entry.target.id);
           else visible.delete(entry.target.id);
         });
-        // The deepest visible section wins: when two overlap at a boundary,
-        // the one being scrolled into is the one worth marking.
-        let current: HTMLElement | null = null;
-        for (const section of sections) if (visible.has(section.id)) current = section;
-        // The hero has no index entry, so nothing is marked while it is in view.
-        setCurrent(current ? current.id : null);
+        update();
       },
       { rootMargin: '-20% 0px -60% 0px', threshold: 0 },
     );
     sections.forEach((section) => observer.observe(section));
+
+    // End of page = the footer fully in view. `intersectionRatio`, not
+    // `isIntersecting`, which is already true for a partly visible footer.
+    const footer = document.querySelector('footer');
+    if (footer) {
+      new IntersectionObserver(
+        ([entry]) => {
+          atBottom = Boolean(entry && entry.intersectionRatio >= 0.99);
+          update();
+        },
+        { threshold: 0.99 },
+      ).observe(footer);
+    }
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
-  } else {
-    start();
-  }
+  start();
 </script>

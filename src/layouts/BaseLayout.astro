@@ -1,4 +1,5 @@
 ---
+import type { ComponentProps } from 'astro/types';
 import '@fontsource-variable/geist/index.css';
 import '@fontsource-variable/geist-mono/index.css';
 import '@/styles/global.css';
@@ -9,13 +10,8 @@ import Footer from '@/components/layout/Footer.astro';
 import { site } from '@/config/site';
 import { href, normalizePath } from '@/utils/url';
 
-interface Props {
-  title?: string;
-  description?: string;
-  image?: string;
-  type?: 'website' | 'article';
-  noindex?: boolean;
-}
+/** The layout takes exactly the SEO props and forwards them to <Seo>. */
+type Props = ComponentProps<typeof Seo>;
 
 const seo = Astro.props;
 const isHome = normalizePath(Astro.url.pathname) === '/';
