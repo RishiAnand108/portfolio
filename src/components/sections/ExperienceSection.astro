@@ -1,107 +1,19 @@
 ---
 /**
  * Experience as a compact expandable list — collapsed rows by default,
- * matching a summary-row layout rather than oversized cards.
- *
- * Each row is an ExperienceItem (a native <details>), so the list works
- * without JavaScript. The small script below only adds the smooth open/close
- * animation. Several entries may be open at once; none start open, so the
- * default appearance stays compact.
+ * matching a summary-row layout rather than oversized cards. The rows and
+ * their accordion behaviour live in ExperienceList; the entries themselves
+ * in src/data/experience.ts.
  */
 import Section from './Section.astro';
-import ExperienceItem from '@/components/experience/ExperienceItem.astro';
-import { experience } from '@/config/experience';
+import ExperienceList from '@/components/experience/ExperienceList.astro';
+import { experience } from '@/data/experience';
 ---
 
 <Section id="experience" title="Experiences">
   {experience.length === 0 ? (
     <p class="text-muted text-[14px]">Experience entries will be added soon.</p>
   ) : (
-    <div>
-      {experience.map((entry, index) => (
-        <div>
-          {index > 0 && <div aria-hidden="true" class="rule-x" />}
-          <ExperienceItem entry={entry} />
-        </div>
-      ))}
-    </div>
+    <ExperienceList />
   )}
 </Section>
-
-<script>
-  // Smooth expand / collapse for the experience rows.
-  //
-  // The panel is a CSS grid whose single row animates between 1fr (open) and
-  // 0fr (the `data-closed` state, which only this script ever sets). So without
-  // JavaScript the native <details> toggle still works, just without the
-  // animation. Opening: set `open` on <details> while the panel is still
-  // collapsed, then on the next frame release it so the row grows. Closing:
-  // collapse the panel, let the row shrink, and only then remove `open`.
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-  document.querySelectorAll<HTMLDetailsElement>('[data-experience]').forEach((details) => {
-    const summary = details.querySelector<HTMLElement>('summary');
-    const panel = details.querySelector<HTMLElement>('[data-panel]');
-    if (!summary || !panel) return;
-
-    if (!details.open) panel.dataset.closed = '';
-
-    // The browser can open a row by itself (find-in-page, a #fragment inside
-    // the row). No click happens then, so follow `toggle` or the content would
-    // stay at zero height. `opening` mutes it while a click animates the row.
-    let opening = false;
-    details.addEventListener('toggle', () => {
-      if (opening) return;
-      if (details.open) delete panel.dataset.closed;
-      else panel.dataset.closed = '';
-    });
-
-    const finishClose = () => {
-      // A quick re-open during the closing animation clears the flag; keep it open.
-      if ('closed' in panel.dataset) details.open = false;
-    };
-
-    summary.addEventListener('click', (event) => {
-      event.preventDefault();
-
-      // Branch on the panel flag, not `open`: while the close animation runs the
-      // element is still `open`, and a click then should re-open, not re-close.
-      if (!('closed' in panel.dataset)) {
-        panel.dataset.closed = '';
-        if (reduceMotion.matches) {
-          finishClose();
-          return;
-        }
-        let done = false;
-        const once = () => {
-          if (done) return;
-          done = true;
-          finishClose();
-        };
-        panel.addEventListener(
-          'transitionend',
-          (e) => {
-            if (e.target === panel) once();
-          },
-          { once: true },
-        );
-        // Safety net in case the transition never fires.
-        window.setTimeout(once, 400);
-      } else {
-        opening = true;
-        details.open = true;
-        if (reduceMotion.matches) {
-          delete panel.dataset.closed;
-          opening = false;
-          return;
-        }
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            delete panel.dataset.closed;
-            opening = false;
-          });
-        });
-      }
-    });
-  });
-</script>

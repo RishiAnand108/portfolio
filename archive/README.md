@@ -6,7 +6,7 @@ Delete it whenever you are sure you no longer need it.
 
 - `content/projects/` — the former per-project Markdown files. Projects are now
   homepage cards driven by `src/config/projects.ts`; there are no case-study pages.
-- `content/experience/` — the former experience Markdown. Now `src/config/experience.ts`.
+- `content/experience/` — the former experience Markdown. Now `src/data/experience.ts`.
 - `config/about.ts` — copy for the former About section, folded into the hero bullets.
 - `components/sections/AboutSection.astro` — the former About section.
 - `components/sections/GithubSection.astro` — the former GitHub activity card. GitHub is

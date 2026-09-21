@@ -1,0 +1,84 @@
+---
+/**
+ * The experience accordion: one ExperienceItem per entry, separated by dotted
+ * rules. Every row starts collapsed and at most one is open at a time.
+ *
+ * Entries default to src/data/experience.ts; pass `entries` to render a
+ * different (e.g. filtered) list with the same UI.
+ */
+import ExperienceItem from './ExperienceItem.astro';
+import { experience, type ExperienceEntry } from '@/data/experience';
+
+interface Props {
+  entries?: ExperienceEntry[];
+}
+
+const { entries = experience } = Astro.props;
+---
+
+<div data-experience-list>
+  {entries.map((entry, index) => (
+    <div>
+      {index > 0 && <div aria-hidden="true" class="rule-x" />}
+      <ExperienceItem entry={entry} />
+    </div>
+  ))}
+</div>
+
+<!-- Without JavaScript nothing can toggle the rows, so show them expanded. -->
+<noscript>
+  <style is:inline>
+    [data-experience-panel] {
+      grid-template-rows: 1fr;
+      visibility: visible;
+    }
+    [data-experience-content] {
+      opacity: 1;
+      translate: none;
+    }
+    [data-experience-chevron] {
+      display: none;
+    }
+  </style>
+</noscript>
+
+<script>
+  // Single-open accordion. Open state is the `data-open` attribute on the
+  // item (the CSS in ExperienceItem animates off it) mirrored to the header
+  // button's `aria-expanded`. Opening a row closes whichever row was open.
+  document.querySelectorAll<HTMLElement>('[data-experience-list]').forEach((list) => {
+    const items = [...list.querySelectorAll<HTMLElement>('[data-experience-item]')];
+    const triggers = items.map((item) =>
+      item.querySelector<HTMLButtonElement>('[data-experience-trigger]'),
+    );
+
+    const setOpen = (index: number, open: boolean) => {
+      items[index].toggleAttribute('data-open', open);
+      triggers[index]?.setAttribute('aria-expanded', String(open));
+    };
+
+    triggers.forEach((trigger, index) => {
+      if (!trigger) return;
+
+      trigger.addEventListener('click', () => {
+        const willOpen = !items[index].hasAttribute('data-open');
+        items.forEach((_, i) => setOpen(i, i === index && willOpen));
+      });
+
+      // Enter / Space come with the <button>. Arrow keys, Home and End move
+      // between headers, as in the WAI-ARIA accordion pattern.
+      trigger.addEventListener('keydown', (event) => {
+        const last = triggers.length - 1;
+        const target = {
+          ArrowDown: index === last ? 0 : index + 1,
+          ArrowUp: index === 0 ? last : index - 1,
+          Home: 0,
+          End: last,
+        }[event.key];
+        if (target === undefined) return;
+        event.preventDefault();
+        triggers[target]?.focus();
+      });
+    });
+  });
+</script>

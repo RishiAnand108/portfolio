@@ -69,17 +69,17 @@ The site runs at <http://localhost:4321>.
 └── src/
     ├── config/                      ★ everything you edit
     │   ├── site.ts                  name, role, links, side index, hero copy
-    │   ├── experience.ts            experience entries
     │   ├── projects.ts              project cards
     │   ├── skills.ts                skill groups
     │   ├── achievements.ts          highlights
     │   └── categories.ts            project categories
+    ├── data/experience.ts           ★ experience entries (logos go in public/images/logos/)
     ├── components/
     │   ├── layout/                  SideIndex (desktop index + scroll-spy), Footer, Seo
     │   ├── ui/                      Button, Tag, TagList, Icon, ThemeToggle, SectionHeading,
     │   │                            EdgeRule (dotted rule + corner nodes)
     │   ├── projects/ProjectCard     one project card
-    │   ├── experience/ExperienceItem one expandable experience row
+    │   ├── experience/              ExperienceList (one-open accordion), ExperienceItem (one row)
     │   └── sections/                Section (shared shell), Hero, HeroBanner (banner + live
     │                                clock), Experience, Projects, Skills, Highlights
     ├── layouts/BaseLayout.astro     page shell: fonts, theme script, column edge lines
@@ -90,7 +90,7 @@ The site runs at <http://localhost:4321>.
 
 ## Updating content
 
-Everything personal is in **`src/config/`**. Presentation lives in components; you should not
+Everything personal is in **`src/config/`** (experience: **`src/data/experience.ts`**). Presentation lives in components; you should not
 need to touch them.
 
 ### Links and the `TODO` placeholder
@@ -142,13 +142,14 @@ One object per card:
 Cards appear in array order. Each file has `TODO (Rishikesh)` comments next to the values
 that still need confirming.
 
-### Experience — `src/config/experience.ts`
+### Experience — `src/data/experience.ts`
 
-One object per role, rendered as an expandable row (all start collapsed): `organization`,
-`role`, `start`, `end` (a date or `'Present'`), `location`, optional `description`,
-`responsibilities`, `tech`, optional `metrics` (only verifiable numbers), optional `logo`
-(a path inside `public/`; initials are shown without one) and optional `link`. Dates and
-location are shown as `TODO` until you fill them in.
+One object per role, rendered as an expandable row (all start collapsed, one open at a
+time): `title` (the company), `role`, optional `employmentType`, `start`, `end` (a date or `'Present'`), `location`,
+optional `description`, `bullets`, `technologies`, optional `metrics` (only verifiable
+numbers), optional `logo` (a path inside `public/`; initials are shown without one),
+optional `secondaryLogo` with `secondaryLogoAlt` (a small mark next to the title) and
+optional `link`. Dates and location are shown as `TODO` until you fill them in.
 
 ### Highlights — `src/config/achievements.ts`
 
