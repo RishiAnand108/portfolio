@@ -3,6 +3,8 @@
  * Order within a group runs from most used to least.
  */
 
+import type { BrandIconName } from '@/components/ui/BrandIcon.astro';
+
 export interface SkillGroup {
   id: string;
   title: string;
@@ -41,3 +43,29 @@ export const skillGroups: SkillGroup[] = [
     items: ['Docker', 'Git', 'GitHub', 'GitHub Actions', 'Google Cloud'],
   },
 ];
+
+/**
+ * Small mark shown before a skill badge. Keys are skill names from the groups
+ * above; values are names from src/components/ui/BrandIcon.astro. Skills
+ * without an accurate mark (concepts, or brands with no icon) are left out and
+ * render as text only.
+ */
+export const skillIcons: Partial<Record<string, BrandIconName>> = {
+  Python: 'python',
+  SQL: 'database',
+  JavaScript: 'javascript',
+  FastAPI: 'fastapi',
+  Django: 'django',
+  PostgreSQL: 'postgresql',
+  SQLAlchemy: 'sqlalchemy',
+  'Scikit-learn': 'scikit-learn',
+  React: 'react',
+  'Next.js': 'nextjs',
+  HTML: 'html',
+  CSS: 'css',
+  Docker: 'docker',
+  Git: 'git',
+  GitHub: 'github',
+  'GitHub Actions': 'github-actions',
+  'Google Cloud': 'google-cloud',
+};

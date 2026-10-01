@@ -1,6 +1,7 @@
 ---
 import Section from './Section.astro';
-import { skillGroups } from '@/config/skills';
+import BrandIcon from '../ui/BrandIcon.astro';
+import { skillGroups, skillIcons } from '@/config/skills';
 ---
 
 <Section id="skills" title="Skills & Technologies">
@@ -11,11 +12,15 @@ import { skillGroups } from '@/config/skills';
           {group.title}
         </h3>
         <ul class="flex flex-wrap gap-1.5" aria-label={`${group.title} skills`}>
-          {group.items.map((item) => (
-            <li class="border-line-2 bg-surface hover:bg-surface-2 text-ink-2 hover:text-ink flex grow items-center justify-center rounded-md border px-3 py-1.5 text-[13px] font-medium transition-colors duration-200">
-              {item}
-            </li>
-          ))}
+          {group.items.map((item) => {
+            const icon = skillIcons[item];
+            return (
+              <li class="border-line-2 bg-surface hover:bg-surface-2 text-ink-2 hover:text-ink flex grow items-center justify-center gap-1.5 rounded-md border px-3 py-1.5 text-[13px] font-medium transition-colors duration-200">
+                {icon && <BrandIcon name={icon} size={16} class="opacity-80" />}
+                {item}
+              </li>
+            );
+          })}
         </ul>
       </div>
     ))}
