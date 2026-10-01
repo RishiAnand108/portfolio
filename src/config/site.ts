@@ -103,6 +103,5 @@ export const hero = {
     'Currently at a market research startup: backend services, data pipelines, automation and AI integrations.',
     'Python, FastAPI, Django and PostgreSQL are my daily tools; Docker and Git package and ship the result.',
     'I bring AI/ML into products where it solves a real problem — models behind APIs, not notebooks.',
-    'B.Tech in Artificial Intelligence and Data Science, with an eye on scalable systems and audio AI.',
   ],
 };
